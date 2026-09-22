@@ -13,14 +13,14 @@ const About = () => {
         </p>
 
         <h1>
-          Designing for
+          Designing human
           <br />
-          <span>how life feels.</span>
+          <span>experiences.</span>
         </h1>
 
         <p className="about-introduction">
-          We create thoughtful spaces shaped around people,
-          place and everyday experience.
+          An architectural and interior design studio creating
+          meaningful spaces around the people who experience them.
         </p>
       </section>
 
@@ -36,21 +36,31 @@ const About = () => {
 
         <div className="about-story-content">
           <p className="about-story-lead">
-            DHÈ Studio approaches every project as a conversation
-            between people, place and possibility.
+            DHÈ — Designing Human Experiences is an architectural
+            and interior design studio grounded in the belief that
+            architecture is not only about shaping spaces, but about
+            shaping the experiences that take place within them.
           </p>
 
           <p>
-            We bring architecture, interiors and landscape
-            together from the beginning. This continuity helps
-            every decision—from the shape of a room to the
-            texture of a material—feel connected and purposeful.
+            Our approach is human-centred, attentive to context,
+            culture, materiality, sustainability, and the everyday
+            ways in which people interact with their surroundings.
           </p>
 
           <p>
-            The result is calm, characterful space made for real
-            life: thoughtful in its details, responsive to its
-            surroundings and distinctly personal.
+            For us, design begins with imagining the experience of
+            the person who will inhabit, use, or encounter a space.
+            We explore how architecture can influence emotions,
+            behaviours, memories, and connections, while responding
+            thoughtfully to the physical and social context of each
+            project.
+          </p>
+
+          <p>
+            From the overall architectural concept to the smallest
+            interior detail, we aim to create spaces that are
+            meaningful, functional, and enduring.
           </p>
 
           <Link to="/projects" className="about-link">
@@ -74,11 +84,11 @@ const About = () => {
               01
             </span>
 
-            <h2>Listen first.</h2>
+            <h2>Human-centred.</h2>
 
             <p>
-              We begin with the people who will live, work and
-              spend time in the space.
+              We begin by imagining how people will inhabit, use,
+              and experience each space.
             </p>
           </article>
 
@@ -87,11 +97,11 @@ const About = () => {
               02
             </span>
 
-            <h2>Think as one.</h2>
+            <h2>Context-aware.</h2>
 
             <p>
-              Architecture, interiors and landscape evolve
-              together instead of being treated separately.
+              Every project responds thoughtfully to its physical,
+              social, and cultural surroundings.
             </p>
           </article>
 
@@ -100,11 +110,12 @@ const About = () => {
               03
             </span>
 
-            <h2>Design for life.</h2>
+            <h2>Made to endure.</h2>
 
             <p>
-              Beautiful ideas become useful, lasting places that
-              improve everyday experience.
+              From the overall concept to the smallest detail, we
+              create spaces that are meaningful, functional, and
+              lasting.
             </p>
           </article>
         </div>
