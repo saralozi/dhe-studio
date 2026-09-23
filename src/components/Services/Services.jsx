@@ -1,7 +1,32 @@
-import { services } from '../../data/services';
+import { useEffect, useState } from 'react';
+import { sanityClient } from '../../sanity/client';
+import { servicesQuery } from '../../sanity/queries';
+import { urlFor } from '../../sanity/image';
 import './services.css';
 
 const Services = () => {
+  const [services, setServices] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const getServices = async () => {
+      try {
+        const servicesFromSanity =
+          await sanityClient.fetch(servicesQuery);
+
+        setServices(servicesFromSanity);
+      } catch (fetchError) {
+        console.error(fetchError);
+        setError('The services could not be loaded.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getServices();
+  }, []);
+
   return (
     <main className="services-page">
       {/* Page introduction */}
@@ -27,33 +52,60 @@ const Services = () => {
       {/* Services list */}
 
       <section className="services-list">
-        {services.map((service) => (
-          <article
-            className="services-row"
-            key={service.id}
-          >
-            <span className="services-number">
-              {service.number}
-            </span>
+        {isLoading && (
+          <p className="services-message">
+            Loading services...
+          </p>
+        )}
 
-            <div className="services-image">
-              <img
-                src={service.image}
-                alt={service.alt}
-              />
-            </div>
+        {error && (
+          <p className="services-message services-error">
+            {error}
+          </p>
+        )}
 
-            <div className="services-content">
-              <h2>{service.title}</h2>
+        {!isLoading &&
+          !error &&
+          services.map((service, index) => (
+            <article
+              className="services-row"
+              key={service._id}
+            >
+              <span className="services-number">
+                {String(service.order || index + 1).padStart(
+                  2,
+                  '0'
+                )}
+              </span>
 
-              <p className="services-main-description">
-                {service.description}
-              </p>
+              <div className="services-image">
+                {service.image && (
+                  <img
+                    src={urlFor(service.image)
+                      .width(1000)
+                      .height(750)
+                      .fit('crop')
+                      .auto('format')
+                      .url()}
+                    alt={
+                      service.imageAlt ||
+                      `${service.title} service`
+                    }
+                  />
+                )}
+              </div>
 
-              <p>{service.details}</p>
-            </div>
-          </article>
-        ))}
+              <div className="services-content">
+                <h2>{service.title}</h2>
+
+                <p className="services-main-description">
+                  {service.shortDescription}
+                </p>
+
+                <p>{service.fullDescription}</p>
+              </div>
+            </article>
+          ))}
       </section>
 
       {/* Contact call to action */}
@@ -71,7 +123,10 @@ const Services = () => {
             <span>in mind?</span>
           </h2>
 
-          <a href="#contact" className="services-contact-link">
+          <a
+            href="#contact"
+            className="services-contact-link"
+          >
             Let’s talk
             <span>↗</span>
           </a>

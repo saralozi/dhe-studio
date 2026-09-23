@@ -1,14 +1,32 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './home.css';
-import { services } from '../../data/services';
-import { projects } from '../../data/projects';
+import { sanityClient } from '../../sanity/client';
+import { servicesQuery, featuredProjectsQuery } from '../../sanity/queries';
+import { urlFor } from '../../sanity/image'
 
 const Home = () => {
+
+  // Hero animation
   const [startAnimation, setStartAnimation] = useState(false);
+
+  // Projects carousel
   const [currentProject, setCurrentProject] = useState(0);
   const projectTrackRef = useRef(null); // create tag
 
+  // Services from Sanity
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState('');
+
+  // Featured projects from Sanity
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] =
+    useState(true);
+  const [projectsError, setProjectsError] =
+    useState('');
+
+  // Start hero animation
   useEffect(() => {
     const animationTimer = setTimeout(() => {
       setStartAnimation(true);
@@ -19,14 +37,62 @@ const Home = () => {
     };
   }, []);
 
+  // Get the services from Sanity
+  useEffect(() => {
+    const getServices = async () => {
+      try {
+        const servicesFromSanity =
+          await sanityClient.fetch(servicesQuery)
+        setServices(servicesFromSanity)
+      } catch (fetchError) {
+        console.error(fetchError)
+        setServicesError('The services could not be loaded.')
+      } finally {
+        setServicesLoading(false)
+      }
+
+    }
+    getServices()
+  }, [])
+
+  // Get featured projects from Sanity
+  useEffect(() => {
+    const getFeaturedProjects = async () => {
+      try {
+        const projectsFromSanity =
+          await sanityClient.fetch(
+            featuredProjectsQuery
+          );
+
+        setProjects(projectsFromSanity);
+        setCurrentProject(0);
+      } catch (fetchError) {
+        console.error(fetchError);
+        setProjectsError(
+          'The featured projects could not be loaded.'
+        );
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    getFeaturedProjects();
+  }, []);
+
+  // Move the projects carousel
   const showProject = (newIndex) => {
     if (newIndex < 0 || newIndex >= projects.length) {
       return;
     }
 
-    setCurrentProject(newIndex);
+    const projectCards =
+      projectTrackRef.current?.children;
 
-    const projectCards = projectTrackRef.current.children; // use the tag to access carousel
+    if (!projectCards?.[newIndex]) {
+      return;
+    }
+
+    setCurrentProject(newIndex);
 
     projectCards[newIndex].scrollIntoView({
       behavior: 'smooth',
@@ -37,6 +103,7 @@ const Home = () => {
 
   return (
     <main className="home">
+      {/*Hero Section */}
       <section
         className="home-immersive"
         aria-label="Explore a modern residence"
@@ -95,6 +162,7 @@ const Home = () => {
         </div>
       </section>
 
+      {/* About Section */}
       <section className="home-about home-section" id="about">
         <p className="home-section-label">
           <span className="home-orange-square"></span>
@@ -124,6 +192,7 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Services section */}
       <section
         className="home-services home-section"
         id="services"
@@ -149,26 +218,56 @@ const Home = () => {
         </div>
 
         <div className="home-service-grid">
-          {services.map((service) => (
-            <article
-              className="home-service-card"
-              key={service.id}
-            >
-              <div className="home-service-image">
-                <img
-                  src={service.image}
-                  alt={service.alt}
-                  loading="lazy"
-                />
+          {servicesLoading && (
+            <p className="home-service-message">
+              Loading services...
+            </p>
+          )}
 
-                <span>{service.number}</span>
-              </div>
 
-              <h3>{service.title}</h3>
+          {servicesError && (
+            <p className="home-service-message home-service-error">
+              {servicesError}
+            </p>
+          )}
 
-              <p>{service.description}</p>
-            </article>
-          ))}
+          {!servicesLoading &&
+            !servicesError &&
+            services.map((service, index) => (
+              <article
+                className="home-service-card"
+                key={service._id}
+              >
+                <div className="home-service-image">
+                  {service.image && (
+                    <img
+                      src={urlFor(service.image)
+                        .width(900)
+                        .height(700)
+                        .fit('crop')
+                        .auto('format')
+                        .url()}
+                      alt={
+                        service.imageAlt ||
+                        `${service.title} service`
+                      }
+                      loading="lazy"
+                    />
+                  )}
+
+                  <span>
+                    {String(
+                      service.order || index + 1
+                    ).padStart(2, '0')}
+                  </span>
+                </div>
+
+                <h3>{service.title}</h3>
+
+                <p>{service.shortDescription}</p>
+              </article>
+            ))}
+
         </div>
       </section>
 
@@ -193,71 +292,131 @@ const Home = () => {
           </Link>
         </div>
 
-        <div
-          className="home-project-track"
-          ref={projectTrackRef} // put tag on carousel
-        >
-          {projects.map((project) => (
-            <article
-              className="home-project-card"
-              key={project.id}
-            >
-              <Link to={`/projects/${project.slug}`}>
-                <div className="home-project-image">
-                  <img
-                    src={project.image}
-                    alt={project.alt}
-                    loading="lazy"
-                  />
+        {projectsLoading && (
+          <p className="home-project-message">
+            Loading projects...
+          </p>
+        )}
 
-                  <span className="home-project-arrow">
-                    ↗
-                  </span>
+        {projectsError && (
+          <p className="home-project-message home-project-error">
+            {projectsError}
+          </p>
+        )}
 
-                  <span className="home-project-category">
-                    {project.category}
-                  </span>
-                </div>
+        {!projectsLoading &&
+          !projectsError &&
+          projects.length === 0 && (
+            <p className="home-project-message">
+              No featured projects have been published yet.
+            </p>
+          )}
 
-                <div className="home-project-information">
-                  <h3>{project.title}</h3>
+        {!projectsLoading &&
+          !projectsError &&
+          projects.length > 0 && (
+            <>
+              <div
+                className="home-project-track"
+                ref={projectTrackRef}
+              >
+                {projects.map((project) => (
+                  <article
+                    className="home-project-card"
+                    key={project._id}
+                  >
+                    <Link to={`/projects/${project.slug}`}>
+                      <div className="home-project-image">
+                        {project.coverImage && (
+                          <img
+                            src={urlFor(project.coverImage)
+                              .width(1400)
+                              .height(1000)
+                              .fit('crop')
+                              .auto('format')
+                              .url()}
+                            alt={
+                              project.coverImageAlt ||
+                              `${project.title} project`
+                            }
+                            loading="lazy"
+                          />
+                        )}
 
+                        <span
+                          className="home-project-arrow"
+                          aria-hidden="true"
+                        >
+                          ↗
+                        </span>
+
+                        <span className="home-project-category">
+                          {project.category}
+                        </span>
+                      </div>
+
+                      <div className="home-project-information">
+                        <h3>{project.title}</h3>
+
+                        <span>
+                          {project.projectType}
+                          {' / '}
+                          {String(project.order || 1).padStart(
+                            2,
+                            '0'
+                          )}
+                        </span>
+                      </div>
+                    </Link>
+                  </article>
+                ))}
+              </div>
+
+              <div className="home-carousel-footer">
+                <span>
+                  SPACES TO LIVE. ROOM TO IMAGINE.
+                </span>
+
+                <div className="home-carousel-controls">
                   <span>
-                    {project.type} / {project.number}
+                    {String(currentProject + 1).padStart(
+                      2,
+                      '0'
+                    )}
+                    {' — '}
+                    {String(projects.length).padStart(
+                      2,
+                      '0'
+                    )}
                   </span>
+
+                  <button
+                    type="button"
+                    aria-label="Previous project"
+                    disabled={currentProject === 0}
+                    onClick={() =>
+                      showProject(currentProject - 1)
+                    }
+                  >
+                    ←
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label="Next project"
+                    disabled={
+                      currentProject === projects.length - 1
+                    }
+                    onClick={() =>
+                      showProject(currentProject + 1)
+                    }
+                  >
+                    →
+                  </button>
                 </div>
-              </Link>
-            </article>
-          ))}
-        </div>
-
-        <div className="home-carousel-footer">
-          <span>SPACES TO LIVE. ROOM TO IMAGINE.</span>
-
-          <div className="home-carousel-controls">
-            <span>
-              0{currentProject + 1} — 0{projects.length}
-            </span>
-
-            <button
-              type="button"
-              aria-label="Previous project"
-              disabled={currentProject === 0}
-              onClick={() => showProject(currentProject - 1)}
-            >
-              ←
-            </button>
-
-            <button
-              type="button"
-              aria-label="Next project"
-              disabled={currentProject === projects.length - 1}
-              onClick={() => showProject(currentProject + 1)}
-            >
-              →
-            </button>
-          </div>
-        </div>
+              </div>
+            </>
+          )}
       </section>
     </main>
   );

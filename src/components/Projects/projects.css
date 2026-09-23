@@ -169,6 +169,17 @@
   text-align: right;
 }
 
+.projects-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 40px 0;
+  color: #1a1a18;
+  font-size: 16px;
+}
+
+.projects-error {
+  color: #c3482d;
+}
 /* Large screens */
 
 @media (min-width: 1600px) {

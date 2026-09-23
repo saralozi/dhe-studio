@@ -10,17 +10,19 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 40px;
+  gap: 60px;
   margin-bottom: 30px;
+}
+
+.footer-heading {
+  max-width: 520px;
 }
 
 .footer-kicker {
   display: flex;
   align-items: center;
   gap: 11px;
-
   margin: 0 0 16px;
-
   color: #aaa89f;
   font-size: 12px;
   font-weight: 500;
@@ -37,7 +39,6 @@
 
 .footer-heading h2 {
   margin: 0;
-
   font-size: 34px;
   font-weight: 400;
   line-height: 1.2;
@@ -52,7 +53,7 @@
 /* Contact information */
 
 .footer-contact {
-  min-width: 280px;
+  min-width: 350px;
 }
 
 .footer-contact dl {
@@ -61,9 +62,10 @@
 
 .footer-contact dl > div {
   display: grid;
-  grid-template-columns: 55px 1fr;
-  gap: 15px;
-  margin-top: 10px;
+  grid-template-columns: 85px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  margin-top: 16px;
 }
 
 .footer-contact dl > div:first-child {
@@ -71,16 +73,79 @@
 }
 
 .footer-contact dt {
-  padding-top: 2px;
+  padding-top: 3px;
   color: #8c8a83;
   font-size: 11px;
+  line-height: 1.5;
   letter-spacing: 1px;
 }
 
 .footer-contact dd {
+  min-width: 0;
   margin: 0;
   color: #cbc8c0;
   font-size: 13px;
+  line-height: 1.6;
+}
+
+.footer-contact dd a {
+  color: inherit;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-contact dd a:hover {
+  color: #ef623d;
+}
+
+/* Instagram */
+
+.footer-instagram-row dd {
+  grid-column: 2;
+}
+
+.footer-instagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.footer-instagram svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.footer-instagram .instagram-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Hide the Instagram label visually */
+
+.footer-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard accessibility */
+
+.footer-instagram:focus-visible,
+.footer-contact dd a:focus-visible,
+.back-to-top:focus-visible,
+.footer-brand:focus-visible {
+  outline: 2px solid #ef623d;
+  outline-offset: 4px;
 }
 
 /* Lower footer */
@@ -90,7 +155,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 25px;
-
   padding-top: 20px;
   border-top: 1px solid #33322e;
 }
@@ -106,26 +170,24 @@
 .footer-logo {
   position: relative;
   display: block;
-
   width: 64px;
   height: 34px;
-
+  flex-shrink: 0;
   overflow: hidden;
   background-color: #080808;
 }
 
 .footer-logo img {
   position: absolute;
-  width: 205px;
-  max-width: none;
   top: -35px;
   left: -71px;
+  width: 205px;
+  max-width: none;
 }
 
 .footer-brand-name {
   padding-left: 12px;
   border-left: 1px solid #42413b;
-
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
@@ -146,16 +208,38 @@
   font-size: 12px;
 }
 
+.footer-copyright {
+  text-align: center;
+}
+
 .back-to-top {
   padding: 8px 0;
   border: 0;
   background: transparent;
+  color: #9c9a93;
+  font-family: inherit;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .back-to-top:hover {
   color: #ffffff;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .footer-top {
+    gap: 35px;
+  }
+
+  .footer-contact {
+    min-width: 300px;
+  }
+
+  .footer-contact dl > div {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
 }
 
 /* Mobile */
@@ -167,7 +251,7 @@
 
   .footer-top {
     display: block;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
 
   .footer-heading h2 {
@@ -177,16 +261,51 @@
 
   .footer-contact {
     min-width: 0;
-    margin-top: 24px;
+    margin-top: 28px;
+  }
+
+  .footer-contact dl > div {
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .footer-instagram-row dd {
+    grid-column: 2;
   }
 
   .footer-bottom {
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 16px;
     padding-top: 18px;
   }
 
   .footer-brand {
     width: 100%;
+  }
+
+  .footer-copyright {
+    text-align: left;
+  }
+}
+
+/* Small mobile */
+
+@media (max-width: 420px) {
+  .footer-contact dl > div {
+    display: block;
+  }
+
+  .footer-contact dt {
+    margin-bottom: 4px;
+  }
+
+  .footer-instagram-row dd {
+    margin-top: 0;
+  }
+
+  .footer-copyright,
+  .back-to-top {
+    font-size: 11px;
   }
 }
