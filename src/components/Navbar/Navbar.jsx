@@ -13,12 +13,19 @@ const Navbar = () => {
     return isActive ? 'nav-link active' : 'nav-link';
   };
 
+  const contactLinkClass = ({ isActive }) => {
+    return isActive
+      ? 'navbar-contact active'
+      : 'navbar-contact';
+  };
+
   return (
     <header className="navbar">
       <Link
         to="/"
         className="navbar-brand"
         aria-label="DHÈ Studio home"
+        onClick={closeMenu}
       >
         <span className="navbar-logo">
           <img
@@ -29,7 +36,6 @@ const Navbar = () => {
 
         <span className="navbar-brand-name">
           DHÈ STUDIO
-
           <small>Designing Human Experiences</small>
         </span>
       </Link>
@@ -37,15 +43,21 @@ const Navbar = () => {
       <button
         type="button"
         className="navbar-toggle"
-        aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+        aria-label={
+          menuOpen
+            ? 'Close navigation'
+            : 'Open navigation'
+        }
         aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(!menuOpen)}
+        aria-controls="main-navigation"
+        onClick={() => setMenuOpen((currentValue) => !currentValue)}
       >
         Menu
         <span>{menuOpen ? '−' : '+'}</span>
       </button>
 
       <nav
+        id="main-navigation"
         className={
           menuOpen
             ? 'navbar-navigation open'
@@ -86,14 +98,14 @@ const Navbar = () => {
           Projects
         </NavLink>
 
-        <a
-          href="#contact"
-          className="navbar-contact"
+        <NavLink
+          to="/contact"
+          className={contactLinkClass}
           onClick={closeMenu}
         >
           Let’s talk
           <span>↗</span>
-        </a>
+        </NavLink>
       </nav>
     </header>
   );

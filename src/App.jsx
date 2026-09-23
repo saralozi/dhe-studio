@@ -7,6 +7,7 @@ import Services from './components/Services/Services';
 import Projects from './components/Projects/Projects';
 import ProjectDetails from './components/Projects/ProjectDetails';
 import NotFound from './components/NotFound/NotFound';
+import Contact from './components/Contact/Contact';
 
 function App() {
 
@@ -40,10 +41,15 @@ function App() {
         />
 
         <Route
-          path="*"
-          element={<NotFound />}
+          path="/contact"
+          element={<Contact />}
         />
-      </Routes>
+
+      <Route
+        path="*"
+        element={<NotFound />}
+      />
+    </Routes >
 
       <Footer />
 
