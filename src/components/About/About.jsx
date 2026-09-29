@@ -1,64 +1,89 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
 import { sanityClient } from '../../sanity/client';
 import { aboutQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
 import './about.css';
 
 const About = () => {
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).aboutPage;
+
   const [about, setAbout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   // Get the About page content from Sanity
+
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getAboutContent = async () => {
       try {
-        const aboutFromSanity = await sanityClient.fetch(
-          aboutQuery,
-          {
-            // We start with English.
-            // Later, this will be the language selected by the user.
-            language: 'en',
-          }
-        );
+        setIsLoading(true);
+        setError('');
+
+        const aboutFromSanity =
+          await sanityClient.fetch(aboutQuery, {
+            language,
+          });
 
         if (!aboutFromSanity) {
-          throw new Error(
-            'No published About document was found.'
-          );
+          throw new Error(text.error);
         }
 
-        setAbout(aboutFromSanity);
+        if (isCurrentRequest) {
+          setAbout(aboutFromSanity);
+        }
       } catch (fetchError) {
         console.error(fetchError);
 
-        setError('The About page could not be loaded.');
+        if (isCurrentRequest) {
+          setError(text.error);
+        }
       } finally {
-        setIsLoading(false);
+        if (isCurrentRequest) {
+          setIsLoading(false);
+        }
       }
     };
 
     getAboutContent();
-  }, []);
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [language, text.error]);
 
   // Loading state
+
   if (isLoading) {
     return (
       <main className="about-page">
         <p className="about-message">
-          Loading studio information...
+          {text.loading}
         </p>
       </main>
     );
   }
 
   // Error state
+
   if (error || !about) {
     return (
       <main className="about-page">
         <p className="about-message about-error">
-          {error || 'The About page could not be loaded.'}
+          {error || text.error}
         </p>
       </main>
     );
@@ -78,7 +103,9 @@ const About = () => {
           <h1 className="page-hero-title">
             {about.heroTitleFirstLine}
             <br />
-            <span>{about.heroTitleSecondLine}</span>
+            <span>
+              {about.heroTitleSecondLine}
+            </span>
           </h1>
 
           <p className="about-introduction">
@@ -101,7 +128,7 @@ const About = () => {
                 .url()}
               alt={
                 about.storyImage.alt ||
-                'DHÈ Studio interior'
+                text.imageFallback
               }
             />
           )}
@@ -139,20 +166,25 @@ const About = () => {
         </p>
 
         <div className="about-principles-grid">
-          {about.principles?.map((principle, index) => (
-            <article
-              className="about-principle"
-              key={principle._key}
-            >
-              <span className="about-principle-number">
-                {String(index + 1).padStart(2, '0')}
-              </span>
+          {about.principles?.map(
+            (principle, index) => (
+              <article
+                className="about-principle"
+                key={principle._key}
+              >
+                <span className="about-principle-number">
+                  {String(index + 1).padStart(
+                    2,
+                    '0'
+                  )}
+                </span>
 
-              <h2>{principle.title}</h2>
+                <h2>{principle.title}</h2>
 
-              <p>{principle.description}</p>
-            </article>
-          ))}
+                <p>{principle.description}</p>
+              </article>
+            )
+          )}
         </div>
       </section>
     </main>

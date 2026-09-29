@@ -1,4 +1,12 @@
 import { useState } from 'react';
+
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
+
 import './contact.css';
 
 const initialFormData = {
@@ -10,18 +18,28 @@ const initialFormData = {
 };
 
 const Contact = () => {
-  const [formData, setFormData] = useState(initialFormData);
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).contactPage;
+
+  const [formData, setFormData] =
+    useState(initialFormData);
+
   const [submissionStatus, setSubmissionStatus] =
     useState('idle');
+
   const [submissionMessage, setSubmissionMessage] =
     useState('');
 
   const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+    const { name, value, type, checked } =
+      event.target;
 
     setFormData((currentFormData) => ({
       ...currentFormData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]:
+        type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -39,30 +57,25 @@ const Contact = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            language,
+          }),
         }
       );
 
-      const responseData = await response.json();
-
       if (!response.ok) {
-        throw new Error(
-          responseData.message ||
-            'The inquiry could not be sent.'
-        );
+        throw new Error(text.error);
       }
 
       setSubmissionStatus('success');
-      setSubmissionMessage(responseData.message);
+      setSubmissionMessage(text.success);
       setFormData(initialFormData);
     } catch (error) {
       console.error(error);
 
       setSubmissionStatus('error');
-      setSubmissionMessage(
-        error.message ||
-          'Something went wrong. Please try again.'
-      );
+      setSubmissionMessage(text.error);
     }
   };
 
@@ -73,27 +86,25 @@ const Contact = () => {
       <section className="contact-introduction">
         <p className="contact-label">
           <span></span>
-          START A PROJECT
+          {text.label}
         </p>
 
         <h1 className="page-hero-title">
-          Tell us about
+          {text.titleFirstLine}
           <br />
-          <span>your idea.</span>
+          <span>{text.titleSecondLine}</span>
         </h1>
 
         <div className="contact-introduction-bottom">
           <p className="contact-introduction-text">
-            Share what you have in mind. You do not need to have
-            everything figured out—we will begin with a
-            conversation.
+            {text.introduction}
           </p>
 
           <a
             href="#project-inquiry"
             className="contact-scroll-link"
           >
-            <span>LET’S TALK</span>
+            <span>{text.scrollLink}</span>
             <span aria-hidden="true">↓</span>
           </a>
         </div>
@@ -103,10 +114,13 @@ const Contact = () => {
 
       <section className="contact-form-section">
         <div className="contact-form-heading">
-          <p>PROJECT INQUIRY</p>
+          <p>{text.formLabel}</p>
 
           <h2>
-            A few details to help us understand <span className="spanTitleContact">your project.</span>
+            {text.formHeadingFirst}{' '}
+            <span className="spanTitleContact">
+              {text.formHeadingEmphasis}
+            </span>
           </h2>
         </div>
 
@@ -119,7 +133,7 @@ const Contact = () => {
 
           <div className="contact-field">
             <label htmlFor="name">
-              Name <span>*</span>
+              {text.name} <span>*</span>
             </label>
 
             <input
@@ -137,7 +151,7 @@ const Contact = () => {
 
           <div className="contact-field">
             <label htmlFor="email">
-              Email <span>*</span>
+              {text.email} <span>*</span>
             </label>
 
             <input
@@ -154,7 +168,9 @@ const Contact = () => {
           {/* Phone */}
 
           <div className="contact-field">
-            <label htmlFor="phone">Phone</label>
+            <label htmlFor="phone">
+              {text.phone}
+            </label>
 
             <input
               id="phone"
@@ -170,7 +186,7 @@ const Contact = () => {
 
           <div className="contact-field contact-message-field">
             <label htmlFor="message">
-              Tell us about your project <span>*</span>
+              {text.message} <span>*</span>
             </label>
 
             <textarea
@@ -180,15 +196,12 @@ const Contact = () => {
               onChange={handleChange}
               rows="8"
               maxLength="3000"
-              placeholder="Tell us about the space, location, approximate area, timeline, or anything else you would like us to know."
+              placeholder={text.messagePlaceholder}
               required
             />
 
             <p className="contact-field-help">
-              You do not need to include your contact details
-              here. You can mention the project type, location,
-              approximate area, needs, preferred style, timeline,
-              or budget.
+              {text.help}
             </p>
           </div>
 
@@ -203,10 +216,7 @@ const Contact = () => {
               required
             />
 
-            <span>
-              I agree that DHÈ Studio may use these details to
-              respond to my inquiry.
-            </span>
+            <span>{text.consent}</span>
           </label>
 
           {/* Submit button */}
@@ -214,11 +224,13 @@ const Contact = () => {
           <button
             type="submit"
             className="contact-submit"
-            disabled={submissionStatus === 'submitting'}
+            disabled={
+              submissionStatus === 'submitting'
+            }
           >
             {submissionStatus === 'submitting'
-              ? 'Sending...'
-              : 'Send inquiry'}
+              ? text.submitting
+              : text.submit}
 
             <span>↗</span>
           </button>

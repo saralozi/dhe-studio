@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
 import { sanityClient } from '../../sanity/client';
 import { servicesQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
@@ -7,6 +13,11 @@ import { urlFor } from '../../sanity/image';
 import './services.css';
 
 const Services = () => {
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).servicesPage;
+
   const servicesListRef = useRef(null);
 
   const [services, setServices] = useState([]);
@@ -20,9 +31,12 @@ const Services = () => {
 
     const getServices = async () => {
       try {
+        setIsLoading(true);
+        setError('');
+
         const servicesFromSanity =
           await sanityClient.fetch(servicesQuery, {
-            language: 'en',
+            language,
           });
 
         if (isCurrentRequest) {
@@ -32,7 +46,7 @@ const Services = () => {
         console.error(fetchError);
 
         if (isCurrentRequest) {
-          setError('The services could not be loaded.');
+          setError(text.error);
         }
       } finally {
         if (isCurrentRequest) {
@@ -46,7 +60,7 @@ const Services = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, []);
+  }, [language, text.error]);
 
   // Reveal each service when it enters the screen
 
@@ -95,13 +109,13 @@ const Services = () => {
       <section className="services-hero">
         <p className="services-label">
           <span></span>
-          WHAT WE DO
+          {text.label}
         </p>
 
         <h1 className="page-hero-title">
-          How we shape
+          {text.titleFirstLine}
           <br />
-          <span>space and experience.</span>
+          <span>{text.titleSecondLine}</span>
         </h1>
       </section>
 
@@ -113,7 +127,7 @@ const Services = () => {
       >
         {isLoading && (
           <p className="services-message">
-            Loading services...
+            {text.loading}
           </p>
         )}
 
@@ -130,13 +144,9 @@ const Services = () => {
               className="services-row"
               key={service._id}
             >
-              {/* Service title */}
-
               <div className="services-title">
                 <h2>{service.title}</h2>
               </div>
-
-              {/* Service description */}
 
               <div className="services-content">
                 <p className="services-main-description">
@@ -145,8 +155,6 @@ const Services = () => {
 
                 <p>{service.fullDescription}</p>
               </div>
-
-              {/* Service image */}
 
               <div className="services-image">
                 {service.image?.asset && (
@@ -159,7 +167,7 @@ const Services = () => {
                       .url()}
                     alt={
                       service.imageAlt ||
-                      `${service.title} service`
+                      `${service.title} ${text.imageFallback}`
                     }
                     loading="lazy"
                   />

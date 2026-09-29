@@ -4,12 +4,19 @@ import { Link, useParams } from 'react-router-dom';
 import { sanityClient } from '../../sanity/client';
 import { projectBySlugQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslations } from '../../i18n/translations';
 
 import NotFound from '../NotFound/NotFound';
 import './projectdetails.css';
 
 const ProjectDetails = () => {
   const { slug } = useParams();
+  const { language } = useLanguage();
+
+  const translations = getTranslations(language);
+  const text = translations.projectDetailsPage;
+  const projectsText = translations.projectsPage;
 
   const [project, setProject] = useState(null);
   const [projectLoading, setProjectLoading] =
@@ -30,7 +37,7 @@ const ProjectDetails = () => {
             projectBySlugQuery,
             {
               slug,
-              language: 'en',
+              language,
             }
           );
 
@@ -41,9 +48,7 @@ const ProjectDetails = () => {
         console.error(fetchError);
 
         if (isCurrentRequest) {
-          setProjectError(
-            'The project could not be loaded.'
-          );
+          setProjectError(text.error);
         }
       } finally {
         if (isCurrentRequest) {
@@ -57,13 +62,13 @@ const ProjectDetails = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, [slug]);
+  }, [slug, language, text.error]);
 
   if (projectLoading) {
     return (
       <main className="project-details">
         <p className="project-details-message">
-          Loading project...
+          {text.loading}
         </p>
       </main>
     );
@@ -77,7 +82,7 @@ const ProjectDetails = () => {
 
           <Link to="/projects">
             <span>←</span>
-            Return to projects
+            {text.returnToProjects}
           </Link>
         </div>
       </main>
@@ -87,6 +92,14 @@ const ProjectDetails = () => {
   if (!project) {
     return <NotFound />;
   }
+
+  const translatedCategory =
+    projectsText.categories[project.category] ||
+    project.category;
+
+  const translatedStatus =
+    text.statuses[project.status] ||
+    project.status;
 
   return (
     <main className="project-details">
@@ -103,7 +116,7 @@ const ProjectDetails = () => {
               .url()}
             alt={
               project.coverImageAlt ||
-              `${project.title} project`
+              `${project.title} ${text.imageFallback}`
             }
           />
         )}
@@ -112,7 +125,7 @@ const ProjectDetails = () => {
 
         <div className="project-details-title">
           <p>
-            {project.category}
+            {translatedCategory}
             {' · '}
             {String(project.order || 1).padStart(2, '0')}
           </p>
@@ -127,35 +140,35 @@ const ProjectDetails = () => {
         <div className="project-details-facts">
           {project.projectType && (
             <div>
-              <span>TYPE</span>
+              <span>{text.type}</span>
               <p>{project.projectType}</p>
             </div>
           )}
 
           {project.location && (
             <div>
-              <span>LOCATION</span>
+              <span>{text.location}</span>
               <p>{project.location}</p>
             </div>
           )}
 
           {project.year && (
             <div>
-              <span>YEAR</span>
+              <span>{text.year}</span>
               <p>{project.year}</p>
             </div>
           )}
 
           {project.status && (
             <div>
-              <span>STATUS</span>
-              <p>{project.status}</p>
+              <span>{text.status}</span>
+              <p>{translatedStatus}</p>
             </div>
           )}
 
           {project.area && (
             <div>
-              <span>AREA</span>
+              <span>{text.area}</span>
               <p>{project.area}</p>
             </div>
           )}
@@ -189,7 +202,7 @@ const ProjectDetails = () => {
                 .url()}
               alt={
                 galleryImage.alt ||
-                `${project.title} project view`
+                `${project.title} ${text.galleryImageFallback}`
               }
               loading="lazy"
             />
@@ -208,7 +221,7 @@ const ProjectDetails = () => {
       <section className="project-details-navigation">
         <Link to="/projects">
           <span>←</span>
-          All projects
+          {text.allProjects}
         </Link>
       </section>
     </main>

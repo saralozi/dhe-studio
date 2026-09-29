@@ -1,33 +1,47 @@
 import { Link } from 'react-router-dom';
+
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
+
 import './NotFound.css';
 
 const NotFound = () => {
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).notFoundPage;
+
   return (
     <main className="not-found">
       <div className="not-found-content">
         <p className="not-found-label">
           <span></span>
-          ERROR 404
+          {text.label}
         </p>
 
         <h1>
-          This space
+          {text.titleFirstLine}
           <br />
-          <span>doesn’t exist.</span>
+          <span>{text.titleSecondLine}</span>
         </h1>
 
         <p className="not-found-description">
-          The page you are looking for may have been moved,
-          renamed or removed.
+          {text.description}
         </p>
 
         <Link to="/" className="not-found-link">
-          Return home
+          {text.homeLink}
           <span>↗</span>
         </Link>
       </div>
 
-      <span className="not-found-number">404</span>
+      <span className="not-found-number">
+        404
+      </span>
     </main>
   );
 };

@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
 import { sanityClient } from '../../sanity/client';
 import { projectsQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
@@ -8,6 +14,11 @@ import { urlFor } from '../../sanity/image';
 import './projects.css';
 
 const Projects = () => {
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).projectsPage;
+
   const [projects, setProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] =
     useState(true);
@@ -19,9 +30,12 @@ const Projects = () => {
 
     const getProjects = async () => {
       try {
+        setProjectsLoading(true);
+        setProjectsError('');
+
         const projectsFromSanity =
           await sanityClient.fetch(projectsQuery, {
-            language: 'en',
+            language,
           });
 
         if (isCurrentRequest) {
@@ -31,9 +45,7 @@ const Projects = () => {
         console.error(fetchError);
 
         if (isCurrentRequest) {
-          setProjectsError(
-            'The projects could not be loaded.'
-          );
+          setProjectsError(text.error);
         }
       } finally {
         if (isCurrentRequest) {
@@ -47,7 +59,7 @@ const Projects = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, []);
+  }, [language, text.error]);
 
   return (
     <main className="projects-page">
@@ -56,13 +68,13 @@ const Projects = () => {
       <section className="projects-hero">
         <p className="projects-label">
           <span></span>
-          SELECTED SPACES
+          {text.label}
         </p>
 
         <h1 className="page-hero-title">
-          Ideas made
+          {text.titleFirstLine}
           <br />
-          <span>into places.</span>
+          <span>{text.titleSecondLine}</span>
         </h1>
       </section>
 
@@ -71,7 +83,7 @@ const Projects = () => {
       <section className="projects-grid">
         {projectsLoading && (
           <p className="projects-message">
-            Loading projects...
+            {text.loading}
           </p>
         )}
 
@@ -85,68 +97,74 @@ const Projects = () => {
           !projectsError &&
           projects.length === 0 && (
             <p className="projects-message">
-              No projects have been published yet.
+              {text.empty}
             </p>
           )}
 
         {!projectsLoading &&
           !projectsError &&
-          projects.map((project, index) => (
-            <article
-              className={`projects-card projects-card-${index + 1}`}
-              key={project._id}
-            >
-              <Link
-                to={`/projects/${project.slug}`}
-                aria-label={`View ${project.title}`}
+          projects.map((project, index) => {
+            const translatedCategory =
+              text.categories[project.category] ||
+              project.category;
+
+            return (
+              <article
+                className={`projects-card projects-card-${index + 1}`}
+                key={project._id}
               >
-                <div className="projects-card-image">
-                  {project.coverImage?.asset && (
-                    <img
-                      src={urlFor(project.coverImage)
-                        .width(1400)
-                        .height(1000)
-                        .fit('crop')
-                        .auto('format')
-                        .url()}
-                      alt={
-                        project.coverImageAlt ||
-                        `${project.title} project`
-                      }
-                      loading="lazy"
-                    />
-                  )}
+                <Link
+                  to={`/projects/${project.slug}`}
+                  aria-label={`${text.viewProject} ${project.title}`}
+                >
+                  <div className="projects-card-image">
+                    {project.coverImage?.asset && (
+                      <img
+                        src={urlFor(project.coverImage)
+                          .width(1400)
+                          .height(1000)
+                          .fit('crop')
+                          .auto('format')
+                          .url()}
+                        alt={
+                          project.coverImageAlt ||
+                          `${project.title} ${text.imageFallback}`
+                        }
+                        loading="lazy"
+                      />
+                    )}
 
-                  <span
-                    className="projects-card-arrow"
-                    aria-hidden="true"
-                  >
-                    ↗
-                  </span>
+                    <span
+                      className="projects-card-arrow"
+                      aria-hidden="true"
+                    >
+                      ↗
+                    </span>
 
-                  <span className="projects-card-category">
-                    {project.category}
-                  </span>
-                </div>
-
-                <div className="projects-card-information">
-                  <div>
-                    <p>
-                      {project.category}
-                      {' · '}
-                      {String(
-                        project.order || index + 1
-                      ).padStart(2, '0')}
-                    </p>
-
-                    <h2>{project.title}</h2>
+                    <span className="projects-card-category">
+                      {translatedCategory}
+                    </span>
                   </div>
 
-                  <p>{project.projectType}</p>
-                </div>
-              </Link>
-            </article>
-          ))}
+                  <div className="projects-card-information">
+                    <div>
+                      <p>
+                        {translatedCategory}
+                        {' · '}
+                        {String(
+                          project.order || index + 1
+                        ).padStart(2, '0')}
+                      </p>
+
+                      <h2>{project.title}</h2>
+                    </div>
+
+                    <p>{project.projectType}</p>
+                  </div>
+                </Link>
+              </article>
+            );
+          })}
       </section>
     </main>
   );

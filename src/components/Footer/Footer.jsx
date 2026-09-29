@@ -1,10 +1,24 @@
 import { Link } from 'react-router-dom';
+
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
+
 import './footer.css';
 
 const Footer = () => {
+  const { language } = useLanguage();
+
+  const text =
+    getTranslations(language).footer;
+
   const currentYear = new Date().getFullYear();
 
   const email = 'info@studiodhe.com';
+
   const instagramUrl =
     'https://www.instagram.com/dhearchitecture/';
 
@@ -19,11 +33,24 @@ const Footer = () => {
     <footer className="footer" id="contact">
       <div className="footer-top">
         <div className="footer-heading">
-
           <h2>
-            Every great space
+            {text.headingFirstLine}
             <br />
-            starts with <em>an idea.</em>
+
+            {text.headingBeforeEmphasis && (
+              <>
+                {text.headingBeforeEmphasis}{' '}
+              </>
+            )}
+
+            <em>{text.headingEmphasis}</em>
+
+            {text.headingAfterEmphasis && (
+              <>
+                {' '}
+                {text.headingAfterEmphasis}
+              </>
+            )}
           </h2>
         </div>
 
@@ -32,7 +59,7 @@ const Footer = () => {
             {/* Email */}
 
             <div>
-              <dt>EMAIL</dt>
+              <dt>{text.email}</dt>
 
               <dd>
                 <a href={`mailto:${email}`}>
@@ -44,7 +71,7 @@ const Footer = () => {
             {/* Social media */}
 
             <div>
-              <dt>SOCIALS</dt>
+              <dt>{text.socials}</dt>
 
               <dd>
                 <a
@@ -52,7 +79,9 @@ const Footer = () => {
                   href={instagramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Visit DHÈ Studio on Instagram"
+                  aria-label={
+                    text.instagramAriaLabel
+                  }
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -92,7 +121,7 @@ const Footer = () => {
         <Link
           to="/"
           className="footer-brand"
-          aria-label="DHÈ Studio home"
+          aria-label={text.homeAriaLabel}
         >
           <span className="footer-logo">
             <img
@@ -103,7 +132,9 @@ const Footer = () => {
 
           <span className="footer-brand-name">
             DHÈ STUDIO
-            <small>Designing Human Experiences</small>
+            <small>
+              Designing Human Experiences
+            </small>
           </span>
         </Link>
 
@@ -116,7 +147,7 @@ const Footer = () => {
           className="back-to-top"
           onClick={scrollToTop}
         >
-          Back to top ↑
+          {text.backToTop} ↑
         </button>
       </div>
     </footer>

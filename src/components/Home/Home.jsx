@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
 import { sanityClient } from '../../sanity/client';
 import {
   featuredProjectsQuery,
@@ -11,6 +17,12 @@ import { urlFor } from '../../sanity/image';
 import './home.css';
 
 const Home = () => {
+  const { language } = useLanguage();
+
+  const translations = getTranslations(language);
+  const text = translations.homePage;
+  const projectsText = translations.projectsPage;
+
   // Hero animation
 
   const [startAnimation, setStartAnimation] =
@@ -58,9 +70,12 @@ const Home = () => {
 
     const getServices = async () => {
       try {
+        setServicesLoading(true);
+        setServicesError('');
+
         const servicesFromSanity =
           await sanityClient.fetch(servicesQuery, {
-            language: 'en',
+            language,
           });
 
         if (isCurrentRequest) {
@@ -70,9 +85,7 @@ const Home = () => {
         console.error(fetchError);
 
         if (isCurrentRequest) {
-          setServicesError(
-            'The services could not be loaded.'
-          );
+          setServicesError(text.servicesError);
         }
       } finally {
         if (isCurrentRequest) {
@@ -86,7 +99,7 @@ const Home = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, []);
+  }, [language, text.servicesError]);
 
   // Get featured projects from Sanity
 
@@ -95,11 +108,14 @@ const Home = () => {
 
     const getFeaturedProjects = async () => {
       try {
+        setProjectsLoading(true);
+        setProjectsError('');
+
         const projectsFromSanity =
           await sanityClient.fetch(
             featuredProjectsQuery,
             {
-              language: 'en',
+              language,
             }
           );
 
@@ -111,9 +127,7 @@ const Home = () => {
         console.error(fetchError);
 
         if (isCurrentRequest) {
-          setProjectsError(
-            'The featured projects could not be loaded.'
-          );
+          setProjectsError(text.projectsError);
         }
       } finally {
         if (isCurrentRequest) {
@@ -127,7 +141,7 @@ const Home = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, []);
+  }, [language, text.projectsError]);
 
   // Move the projects carousel
 
@@ -161,7 +175,7 @@ const Home = () => {
 
       <section
         className="home-immersive"
-        aria-label="Explore a modern residence"
+        aria-label={text.heroAriaLabel}
       >
         <div
           className={
@@ -174,14 +188,14 @@ const Home = () => {
             <img
               className="home-hero-outside"
               src="/images/modern-exterior.webp"
-              alt="Contemporary modern residence exterior"
+              alt={text.exteriorImageAlt}
               fetchPriority="high"
             />
 
             <img
               className="home-hero-inside"
               src="/images/modern-interior.webp"
-              alt="Warm contemporary residential interior"
+              alt={text.interiorImageAlt}
             />
           </div>
 
@@ -190,18 +204,18 @@ const Home = () => {
           <div className="home-hero-copy">
             <p className="home-hero-eyebrow">
               <span></span>
-              DESIGNING HUMAN EXPERIENCES
+              {text.heroEyebrow}
             </p>
 
             <h1>
-              Spaces for life.
+              {text.heroTitleFirstLine}
               <br />
-              Designed around <em>you.</em>
+              {text.heroTitleSecondLine}{' '}
+              <em>{text.heroTitleEmphasis}</em>
             </h1>
 
             <p className="home-hero-description">
-              A dialogue between people, place, and
-              possibility.
+              {text.heroDescription}
             </p>
           </div>
 
@@ -210,7 +224,7 @@ const Home = () => {
               href="#about"
               className="home-scroll-hint"
             >
-              SCROLL TO DISCOVER
+              {text.scrollToDiscover}
               <span>↓</span>
             </a>
           </div>
@@ -225,31 +239,24 @@ const Home = () => {
       >
         <p className="home-section-label">
           <span className="home-orange-square"></span>
-          01 / THE STUDIO
+          {text.aboutLabel}
         </p>
 
         <div className="home-about-content">
           <h2>
-            Architecture shaped by
+            {text.aboutTitleFirstLine}
             <br />
-            <span>people and place.</span>
+            <span>{text.aboutTitleSecondLine}</span>
           </h2>
 
           <div className="home-about-bottom">
-            <p>
-              DHÈ is an architectural and interior design
-              studio focused on the experiences that happen
-              within a space. With attention to context,
-              culture, materiality and sustainability, we
-              create places that are meaningful, functional
-              and made to endure.
-            </p>
+            <p>{text.aboutDescription}</p>
 
             <Link
               to="/about"
               className="home-page-link"
             >
-              Meet the studio
+              {text.aboutLink}
               <span>↗</span>
             </Link>
           </div>
@@ -266,13 +273,13 @@ const Home = () => {
           <div>
             <p className="home-section-label">
               <span className="home-orange-square"></span>
-              02 / WHAT WE DO
+              {text.servicesLabel}
             </p>
 
             <h2>
-              From the first idea
+              {text.servicesTitleFirstLine}
               <br />
-              to the final detail.
+              {text.servicesTitleSecondLine}
             </h2>
           </div>
 
@@ -280,7 +287,7 @@ const Home = () => {
             to="/services"
             className="home-page-link"
           >
-            Explore our services
+            {text.servicesLink}
             <span>↗</span>
           </Link>
         </div>
@@ -288,7 +295,7 @@ const Home = () => {
         <div className="home-service-grid">
           {servicesLoading && (
             <p className="home-service-message">
-              Loading services...
+              {text.servicesLoading}
             </p>
           )}
 
@@ -308,7 +315,7 @@ const Home = () => {
                 <Link
                   to="/services"
                   className="home-service-link"
-                  aria-label={`View ${service.title} service`}
+                  aria-label={`${text.viewService} ${service.title}`}
                 >
                   <div className="home-service-image">
                     {service.image?.asset && (
@@ -321,7 +328,7 @@ const Home = () => {
                           .url()}
                         alt={
                           service.imageAlt ||
-                          `${service.title} service`
+                          `${service.title} ${text.serviceImageFallback}`
                         }
                         loading="lazy"
                       />
@@ -350,13 +357,13 @@ const Home = () => {
           <div>
             <p className="home-section-label">
               <span className="home-orange-square"></span>
-              03 / SELECTED SPACES
+              {text.projectsLabel}
             </p>
 
             <h2>
-              A few ways
+              {text.projectsTitleFirstLine}
               <br />
-              an idea becomes a place.
+              {text.projectsTitleSecondLine}
             </h2>
           </div>
 
@@ -364,14 +371,14 @@ const Home = () => {
             to="/projects"
             className="home-page-link"
           >
-            View all projects
+            {text.projectsLink}
             <span>↗</span>
           </Link>
         </div>
 
         {projectsLoading && (
           <p className="home-project-message">
-            Loading projects...
+            {text.projectsLoading}
           </p>
         )}
 
@@ -385,7 +392,7 @@ const Home = () => {
           !projectsError &&
           projects.length === 0 && (
             <p className="home-project-message">
-              No featured projects have been published yet.
+              {text.projectsEmpty}
             </p>
           )}
 
@@ -397,59 +404,66 @@ const Home = () => {
                 className="home-project-track"
                 ref={projectTrackRef}
               >
-                {projects.map((project) => (
-                  <article
-                    className="home-project-card"
-                    key={project._id}
-                  >
-                    <Link
-                      to={`/projects/${project.slug}`}
+                {projects.map((project) => {
+                  const translatedCategory =
+                    projectsText.categories[
+                      project.category
+                    ] || project.category;
+
+                  return (
+                    <article
+                      className="home-project-card"
+                      key={project._id}
                     >
-                      <div className="home-project-image">
-                        {project.coverImage?.asset && (
-                          <img
-                            src={urlFor(
-                              project.coverImage
-                            )
-                              .width(1400)
-                              .height(1000)
-                              .fit('crop')
-                              .auto('format')
-                              .url()}
-                            alt={
-                              project.coverImageAlt ||
-                              `${project.title} project`
-                            }
-                            loading="lazy"
-                          />
-                        )}
+                      <Link
+                        to={`/projects/${project.slug}`}
+                      >
+                        <div className="home-project-image">
+                          {project.coverImage?.asset && (
+                            <img
+                              src={urlFor(
+                                project.coverImage
+                              )
+                                .width(1400)
+                                .height(1000)
+                                .fit('crop')
+                                .auto('format')
+                                .url()}
+                              alt={
+                                project.coverImageAlt ||
+                                `${project.title} ${text.projectImageFallback}`
+                              }
+                              loading="lazy"
+                            />
+                          )}
 
-                        <span
-                          className="home-project-arrow"
-                          aria-hidden="true"
-                        >
-                          ↗
-                        </span>
+                          <span
+                            className="home-project-arrow"
+                            aria-hidden="true"
+                          >
+                            ↗
+                          </span>
 
-                        <span className="home-project-category">
-                          {project.category}
-                        </span>
-                      </div>
+                          <span className="home-project-category">
+                            {translatedCategory}
+                          </span>
+                        </div>
 
-                      <div className="home-project-information">
-                        <h3>{project.title}</h3>
+                        <div className="home-project-information">
+                          <h3>{project.title}</h3>
 
-                        <span>
-                          {project.projectType}
-                          {' / '}
-                          {String(
-                            project.order || 1
-                          ).padStart(2, '0')}
-                        </span>
-                      </div>
-                    </Link>
-                  </article>
-                ))}
+                          <span>
+                            {project.projectType}
+                            {' / '}
+                            {String(
+                              project.order || 1
+                            ).padStart(2, '0')}
+                          </span>
+                        </div>
+                      </Link>
+                    </article>
+                  );
+                })}
               </div>
 
               <div className="home-carousel-footer">
@@ -467,7 +481,7 @@ const Home = () => {
 
                   <button
                     type="button"
-                    aria-label="Previous project"
+                    aria-label={text.previousProject}
                     disabled={currentProject === 0}
                     onClick={() =>
                       showProject(currentProject - 1)
@@ -478,7 +492,7 @@ const Home = () => {
 
                   <button
                     type="button"
-                    aria-label="Next project"
+                    aria-label={text.nextProject}
                     disabled={
                       currentProject ===
                       projects.length - 1
