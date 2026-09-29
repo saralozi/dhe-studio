@@ -21,6 +21,7 @@
   width: 6px;
   height: 6px;
   flex-shrink: 0;
+
   background-color: #ef623d;
 }
 
@@ -34,19 +35,6 @@
 
   min-height: 68vh;
   padding: 120px 6% 90px;
-}
-
-.projects-hero h1 {
-  margin: 0;
-
-  font-size: clamp(52px, 7vw, 105px);
-  font-weight: 400;
-  line-height: 1.02;
-  letter-spacing: -5px;
-}
-
-.projects-hero h1 > span {
-  color: #919088;
 }
 
 .projects-introduction {
@@ -86,16 +74,23 @@
   text-decoration: none;
 }
 
+/* Project image */
+
 .projects-card-image {
   position: relative;
+
   aspect-ratio: 1.35;
   overflow: hidden;
+
   background-color: #d0cec7;
 }
 
 .projects-card-image img {
+  display: block;
+
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 
   transition: transform 0.8s ease;
@@ -119,7 +114,19 @@
   border-radius: 50%;
   background-color: #eae8e2;
   color: #181818;
+
   font-size: 22px;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.projects-card:hover .projects-card-arrow {
+  background-color: #ef623d;
+  color: #ffffff;
+  transform: translate(3px, -3px);
 }
 
 .projects-card-category {
@@ -169,10 +176,14 @@
   text-align: right;
 }
 
+/* Loading and error messages */
+
 .projects-message {
   grid-column: 1 / -1;
+
   margin: 0;
   padding: 40px 0;
+
   color: #1a1a18;
   font-size: 16px;
 }
@@ -180,6 +191,7 @@
 .projects-error {
   color: #c3482d;
 }
+
 /* Large screens */
 
 @media (min-width: 1600px) {
@@ -219,18 +231,15 @@
     padding: 80px 6% 65px;
   }
 
-  .projects-hero h1 {
-    font-size: clamp(48px, 14vw, 72px);
-    letter-spacing: -3px;
-  }
-
   .projects-introduction {
     margin-left: 0;
+
     font-size: 15px;
   }
 
   .projects-grid {
     display: block;
+
     padding: 10px 6% 68px;
   }
 
@@ -242,6 +251,21 @@
 
   .projects-card-image {
     aspect-ratio: 4 / 4.5;
+  }
+
+  .projects-card-arrow {
+    top: 15px;
+    right: 15px;
+
+    width: 42px;
+    height: 42px;
+
+    font-size: 20px;
+  }
+
+  .projects-card-category {
+    left: 15px;
+    bottom: 15px;
   }
 
   .projects-card-information {
@@ -256,5 +280,22 @@
 
   .projects-card-information h2 {
     font-size: 28px;
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-card-image img,
+  .projects-card-arrow {
+    transition: none;
+  }
+
+  .projects-card:hover .projects-card-image img {
+    transform: none;
+  }
+
+  .projects-card:hover .projects-card-arrow {
+    transform: none;
   }
 }

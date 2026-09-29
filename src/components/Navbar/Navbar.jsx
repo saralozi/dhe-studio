@@ -1,16 +1,49 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+
+import {
+  useLanguage,
+} from '../../context/LanguageContext';
+import {
+  getTranslations,
+} from '../../i18n/translations';
+
 import './navbar.css';
+
+const languageOptions = [
+  {
+    value: 'en',
+    label: 'EN',
+  },
+  {
+    value: 'sq',
+    label: 'AL',
+  },
+  {
+    value: 'tr',
+    label: 'TR',
+  },
+];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const { language, setLanguage } = useLanguage();
+  const text = getTranslations(language).navbar;
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
+  const changeLanguage = (newLanguage) => {
+    setLanguage(newLanguage);
+    closeMenu();
+  };
+
   const navLinkClass = ({ isActive }) => {
-    return isActive ? 'nav-link active' : 'nav-link';
+    return isActive
+      ? 'nav-link active'
+      : 'nav-link';
   };
 
   const contactLinkClass = ({ isActive }) => {
@@ -45,68 +78,105 @@ const Navbar = () => {
         className="navbar-toggle"
         aria-label={
           menuOpen
-            ? 'Close navigation'
-            : 'Open navigation'
+            ? text.closeMenu
+            : text.openMenu
         }
         aria-expanded={menuOpen}
-        aria-controls="main-navigation"
-        onClick={() => setMenuOpen((currentValue) => !currentValue)}
+        aria-controls="navbar-panel"
+        onClick={() =>
+          setMenuOpen((currentValue) => !currentValue)
+        }
       >
-        Menu
+        {text.menu}
         <span>{menuOpen ? '−' : '+'}</span>
       </button>
 
-      <nav
-        id="main-navigation"
+      <div
+        id="navbar-panel"
         className={
           menuOpen
-            ? 'navbar-navigation open'
-            : 'navbar-navigation'
+            ? 'navbar-right open'
+            : 'navbar-right'
         }
-        aria-label="Main navigation"
       >
-        <NavLink
-          to="/"
-          end
-          className={navLinkClass}
-          onClick={closeMenu}
-        >
-          Home
-        </NavLink>
+        {/* Language selector */}
 
-        <NavLink
-          to="/about"
-          className={navLinkClass}
-          onClick={closeMenu}
+        <div
+          className="navbar-language-switcher"
+          role="group"
+          aria-label={text.languageSelector}
         >
-          About
-        </NavLink>
+          {languageOptions.map((option) => (
+            <button
+              type="button"
+              className={
+                language === option.value
+                  ? 'navbar-language active'
+                  : 'navbar-language'
+              }
+              aria-label={`${text.languageSelector}: ${option.label}`}
+              aria-pressed={
+                language === option.value
+              }
+              key={option.value}
+              onClick={() =>
+                changeLanguage(option.value)
+              }
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
 
-        <NavLink
-          to="/services"
-          className={navLinkClass}
-          onClick={closeMenu}
-        >
-          Services
-        </NavLink>
+        {/* Main navigation */}
 
-        <NavLink
-          to="/projects"
-          className={navLinkClass}
-          onClick={closeMenu}
+        <nav
+          className="navbar-navigation"
+          aria-label={text.mainNavigation}
         >
-          Projects
-        </NavLink>
+          <NavLink
+            to="/"
+            end
+            className={navLinkClass}
+            onClick={closeMenu}
+          >
+            {text.home}
+          </NavLink>
 
-        <NavLink
-          to="/contact"
-          className={contactLinkClass}
-          onClick={closeMenu}
-        >
-          Let’s talk
-          <span>↗</span>
-        </NavLink>
-      </nav>
+          <NavLink
+            to="/about"
+            className={navLinkClass}
+            onClick={closeMenu}
+          >
+            {text.about}
+          </NavLink>
+
+          <NavLink
+            to="/services"
+            className={navLinkClass}
+            onClick={closeMenu}
+          >
+            {text.services}
+          </NavLink>
+
+          <NavLink
+            to="/projects"
+            className={navLinkClass}
+            onClick={closeMenu}
+          >
+            {text.projects}
+          </NavLink>
+
+          <NavLink
+            to="/contact"
+            className={contactLinkClass}
+            onClick={closeMenu}
+          >
+            {text.contact}
+            <span>↗</span>
+          </NavLink>
+        </nav>
+      </div>
     </header>
   );
 };

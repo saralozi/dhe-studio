@@ -18,6 +18,8 @@ const ProjectDetails = () => {
     useState('');
 
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getProject = async () => {
       try {
         setProjectLoading(true);
@@ -26,21 +28,35 @@ const ProjectDetails = () => {
         const projectFromSanity =
           await sanityClient.fetch(
             projectBySlugQuery,
-            { slug }
+            {
+              slug,
+              language: 'en',
+            }
           );
 
-        setProject(projectFromSanity);
+        if (isCurrentRequest) {
+          setProject(projectFromSanity);
+        }
       } catch (fetchError) {
         console.error(fetchError);
-        setProjectError(
-          'The project could not be loaded.'
-        );
+
+        if (isCurrentRequest) {
+          setProjectError(
+            'The project could not be loaded.'
+          );
+        }
       } finally {
-        setProjectLoading(false);
+        if (isCurrentRequest) {
+          setProjectLoading(false);
+        }
       }
     };
 
     getProject();
+
+    return () => {
+      isCurrentRequest = false;
+    };
   }, [slug]);
 
   if (projectLoading) {
@@ -77,7 +93,7 @@ const ProjectDetails = () => {
       {/* Project hero */}
 
       <section className="project-details-hero">
-        {project.coverImage && (
+        {project.coverImage?.asset && (
           <img
             src={urlFor(project.coverImage)
               .width(2000)
@@ -165,17 +181,19 @@ const ProjectDetails = () => {
           className="project-details-image"
           key={galleryImage._key}
         >
-          <img
-            src={urlFor(galleryImage)
-              .width(1800)
-              .auto('format')
-              .url()}
-            alt={
-              galleryImage.alt ||
-              `${project.title} project view`
-            }
-            loading="lazy"
-          />
+          {galleryImage.asset && (
+            <img
+              src={urlFor(galleryImage)
+                .width(1800)
+                .auto('format')
+                .url()}
+              alt={
+                galleryImage.alt ||
+                `${project.title} project view`
+              }
+              loading="lazy"
+            />
+          )}
 
           {galleryImage.caption && (
             <p className="project-details-caption">

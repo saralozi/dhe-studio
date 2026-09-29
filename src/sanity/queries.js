@@ -1,12 +1,35 @@
 export const servicesQuery = `
   *[_type == "service"] | order(order asc) {
     _id,
-    title,
+
+    "title": coalesce(
+      title[language == $language][0].value,
+      title[language == "en"][0].value
+    ),
+
     "slug": slug.current,
-    shortDescription,
-    fullDescription,
-    image,
-    "imageAlt": image.alt,
+
+    "shortDescription": coalesce(
+      shortDescription[language == $language][0].value,
+      shortDescription[language == "en"][0].value
+    ),
+
+    "fullDescription": coalesce(
+      fullDescription[language == $language][0].value,
+      fullDescription[language == "en"][0].value
+    ),
+
+    image {
+      asset,
+      hotspot,
+      crop
+    },
+
+    "imageAlt": coalesce(
+      image.alt[language == $language][0].value,
+      image.alt[language == "en"][0].value
+    ),
+
     order
   }
 `;
@@ -14,17 +37,46 @@ export const servicesQuery = `
 export const projectsQuery = `
   *[_type == "project"] | order(order asc) {
     _id,
-    title,
+
+    "title": coalesce(
+      title[language == $language][0].value,
+      title[language == "en"][0].value
+    ),
+
     "slug": slug.current,
+
     category,
-    projectType,
-    location,
+
+    "projectType": coalesce(
+      projectType[language == $language][0].value,
+      projectType[language == "en"][0].value
+    ),
+
+    "location": coalesce(
+      location[language == $language][0].value,
+      location[language == "en"][0].value
+    ),
+
     year,
     status,
     area,
-    shortDescription,
-    coverImage,
-    "coverImageAlt": coverImage.alt,
+
+    "shortDescription": coalesce(
+      shortDescription[language == $language][0].value,
+      shortDescription[language == "en"][0].value
+    ),
+
+    coverImage {
+      asset,
+      hotspot,
+      crop
+    },
+
+    "coverImageAlt": coalesce(
+      coverImage.alt[language == $language][0].value,
+      coverImage.alt[language == "en"][0].value
+    ),
+
     featured,
     order
   }
@@ -36,24 +88,68 @@ export const projectBySlugQuery = `
     slug.current == $slug
   ][0] {
     _id,
-    title,
+
+    "title": coalesce(
+      title[language == $language][0].value,
+      title[language == "en"][0].value
+    ),
+
     "slug": slug.current,
+
     category,
-    projectType,
-    location,
+
+    "projectType": coalesce(
+      projectType[language == $language][0].value,
+      projectType[language == "en"][0].value
+    ),
+
+    "location": coalesce(
+      location[language == $language][0].value,
+      location[language == "en"][0].value
+    ),
+
     year,
     status,
     area,
-    shortDescription,
-    fullDescription,
-    coverImage,
-    "coverImageAlt": coverImage.alt,
+
+    "shortDescription": coalesce(
+      shortDescription[language == $language][0].value,
+      shortDescription[language == "en"][0].value
+    ),
+
+    "fullDescription": coalesce(
+      fullDescription[language == $language][0].value,
+      fullDescription[language == "en"][0].value
+    ),
+
+    coverImage {
+      asset,
+      hotspot,
+      crop
+    },
+
+    "coverImageAlt": coalesce(
+      coverImage.alt[language == $language][0].value,
+      coverImage.alt[language == "en"][0].value
+    ),
+
     order,
+
     gallery[] {
       _key,
       asset,
-      alt,
-      caption
+      hotspot,
+      crop,
+
+      "alt": coalesce(
+        alt[language == $language][0].value,
+        alt[language == "en"][0].value
+      ),
+
+      "caption": coalesce(
+        caption[language == $language][0].value,
+        caption[language == "en"][0].value
+      )
     }
   }
 `;
@@ -64,15 +160,114 @@ export const featuredProjectsQuery = `
     featured == true
   ] | order(order asc) {
     _id,
-    title,
+
+    "title": coalesce(
+      title[language == $language][0].value,
+      title[language == "en"][0].value
+    ),
+
     "slug": slug.current,
+
     category,
-    projectType,
-    location,
+
+    "projectType": coalesce(
+      projectType[language == $language][0].value,
+      projectType[language == "en"][0].value
+    ),
+
+    "location": coalesce(
+      location[language == $language][0].value,
+      location[language == "en"][0].value
+    ),
+
     year,
-    shortDescription,
-    coverImage,
-    "coverImageAlt": coverImage.alt,
+
+    "shortDescription": coalesce(
+      shortDescription[language == $language][0].value,
+      shortDescription[language == "en"][0].value
+    ),
+
+    coverImage {
+      asset,
+      hotspot,
+      crop
+    },
+
+    "coverImageAlt": coalesce(
+      coverImage.alt[language == $language][0].value,
+      coverImage.alt[language == "en"][0].value
+    ),
+
     order
+  }
+`;
+
+export const aboutQuery = `
+  *[_type == "about"][0] {
+    _id,
+
+    "heroLabel": coalesce(
+      heroLabel[language == $language][0].value,
+      heroLabel[language == "en"][0].value
+    ),
+
+    "heroTitleFirstLine": coalesce(
+      heroTitleFirstLine[language == $language][0].value,
+      heroTitleFirstLine[language == "en"][0].value
+    ),
+
+    "heroTitleSecondLine": coalesce(
+      heroTitleSecondLine[language == $language][0].value,
+      heroTitleSecondLine[language == "en"][0].value
+    ),
+
+    "heroIntroduction": coalesce(
+      heroIntroduction[language == $language][0].value,
+      heroIntroduction[language == "en"][0].value
+    ),
+
+    storyImage {
+      asset,
+      hotspot,
+      crop,
+
+      "alt": coalesce(
+        alt[language == $language][0].value,
+        alt[language == "en"][0].value
+      )
+    },
+
+    storyParagraphs[] {
+      _key,
+
+      "text": coalesce(
+        text[language == $language][0].value,
+        text[language == "en"][0].value
+      )
+    },
+
+    "projectsLinkLabel": coalesce(
+      projectsLinkLabel[language == $language][0].value,
+      projectsLinkLabel[language == "en"][0].value
+    ),
+
+    "approachLabel": coalesce(
+      approachLabel[language == $language][0].value,
+      approachLabel[language == "en"][0].value
+    ),
+
+    principles[] {
+      _key,
+
+      "title": coalesce(
+        title[language == $language][0].value,
+        title[language == "en"][0].value
+      ),
+
+      "description": coalesce(
+        description[language == $language][0].value,
+        description[language == "en"][0].value
+      )
+    }
   }
 `;

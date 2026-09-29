@@ -15,23 +15,38 @@ const Projects = () => {
     useState('');
 
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getProjects = async () => {
       try {
         const projectsFromSanity =
-          await sanityClient.fetch(projectsQuery);
+          await sanityClient.fetch(projectsQuery, {
+            language: 'en',
+          });
 
-        setProjects(projectsFromSanity);
+        if (isCurrentRequest) {
+          setProjects(projectsFromSanity);
+        }
       } catch (fetchError) {
         console.error(fetchError);
-        setProjectsError(
-          'The projects could not be loaded.'
-        );
+
+        if (isCurrentRequest) {
+          setProjectsError(
+            'The projects could not be loaded.'
+          );
+        }
       } finally {
-        setProjectsLoading(false);
+        if (isCurrentRequest) {
+          setProjectsLoading(false);
+        }
       }
     };
 
     getProjects();
+
+    return () => {
+      isCurrentRequest = false;
+    };
   }, []);
 
   return (
@@ -44,16 +59,11 @@ const Projects = () => {
           SELECTED SPACES
         </p>
 
-        <h1>
+        <h1 className="page-hero-title">
           Ideas made
           <br />
           <span>into places.</span>
         </h1>
-
-        <p className="projects-introduction">
-          A growing collection of residential architecture and
-          interiors designed around the way people live.
-        </p>
       </section>
 
       {/* Projects list */}
@@ -91,7 +101,7 @@ const Projects = () => {
                 aria-label={`View ${project.title}`}
               >
                 <div className="projects-card-image">
-                  {project.coverImage && (
+                  {project.coverImage?.asset && (
                     <img
                       src={urlFor(project.coverImage)
                         .width(1400)

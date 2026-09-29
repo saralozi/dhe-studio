@@ -1,7 +1,69 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { sanityClient } from '../../sanity/client';
+import { aboutQuery } from '../../sanity/queries';
+import { urlFor } from '../../sanity/image';
 import './about.css';
 
 const About = () => {
+  const [about, setAbout] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Get the About page content from Sanity
+  useEffect(() => {
+    const getAboutContent = async () => {
+      try {
+        const aboutFromSanity = await sanityClient.fetch(
+          aboutQuery,
+          {
+            // We start with English.
+            // Later, this will be the language selected by the user.
+            language: 'en',
+          }
+        );
+
+        if (!aboutFromSanity) {
+          throw new Error(
+            'No published About document was found.'
+          );
+        }
+
+        setAbout(aboutFromSanity);
+      } catch (fetchError) {
+        console.error(fetchError);
+
+        setError('The About page could not be loaded.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getAboutContent();
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <main className="about-page">
+        <p className="about-message">
+          Loading studio information...
+        </p>
+      </main>
+    );
+  }
+
+  // Error state
+  if (error || !about) {
+    return (
+      <main className="about-page">
+        <p className="about-message about-error">
+          {error || 'The About page could not be loaded.'}
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="about-page">
       {/* Page introduction */}
@@ -9,62 +71,60 @@ const About = () => {
       <section className="about-hero">
         <p className="about-label">
           <span></span>
-          THE STUDIO
+          {about.heroLabel}
         </p>
 
-        <h1>
-          Designing human
-          <br />
-          <span>experiences.</span>
-        </h1>
+        <div className="about-hero-content">
+          <h1 className="page-hero-title">
+            {about.heroTitleFirstLine}
+            <br />
+            <span>{about.heroTitleSecondLine}</span>
+          </h1>
 
-        <p className="about-introduction">
-          An architectural and interior design studio creating
-          meaningful spaces around the people who experience them.
-        </p>
+          <p className="about-introduction">
+            {about.heroIntroduction}
+          </p>
+        </div>
       </section>
 
       {/* Studio story */}
 
       <section className="about-story">
         <div className="about-story-image">
-          <img
-            src="/images/modern-interior.webp"
-            alt="Warm contemporary residential interior"
-          />
+          {about.storyImage?.asset && (
+            <img
+              src={urlFor(about.storyImage)
+                .width(1200)
+                .height(900)
+                .fit('crop')
+                .auto('format')
+                .url()}
+              alt={
+                about.storyImage.alt ||
+                'DHÈ Studio interior'
+              }
+            />
+          )}
         </div>
 
         <div className="about-story-content">
-          <p className="about-story-lead">
-            DHÈ — Designing Human Experiences is an architectural
-            and interior design studio grounded in the belief that
-            architecture is not only about shaping spaces, but about
-            shaping the experiences that take place within them.
-          </p>
-
-          <p>
-            Our approach is human-centred, attentive to context,
-            culture, materiality, sustainability, and the everyday
-            ways in which people interact with their surroundings.
-          </p>
-
-          <p>
-            For us, design begins with imagining the experience of
-            the person who will inhabit, use, or encounter a space.
-            We explore how architecture can influence emotions,
-            behaviours, memories, and connections, while responding
-            thoughtfully to the physical and social context of each
-            project.
-          </p>
-
-          <p>
-            From the overall architectural concept to the smallest
-            interior detail, we aim to create spaces that are
-            meaningful, functional, and enduring.
-          </p>
+          {about.storyParagraphs?.map(
+            (paragraph, index) => (
+              <p
+                className={
+                  index === 0
+                    ? 'about-story-lead'
+                    : undefined
+                }
+                key={paragraph._key}
+              >
+                {paragraph.text}
+              </p>
+            )
+          )}
 
           <Link to="/projects" className="about-link">
-            Explore our projects
+            {about.projectsLinkLabel}
             <span>↗</span>
           </Link>
         </div>
@@ -75,49 +135,24 @@ const About = () => {
       <section className="about-principles">
         <p className="about-label">
           <span></span>
-          OUR APPROACH
+          {about.approachLabel}
         </p>
 
         <div className="about-principles-grid">
-          <article className="about-principle">
-            <span className="about-principle-number">
-              01
-            </span>
+          {about.principles?.map((principle, index) => (
+            <article
+              className="about-principle"
+              key={principle._key}
+            >
+              <span className="about-principle-number">
+                {String(index + 1).padStart(2, '0')}
+              </span>
 
-            <h2>Human-centred.</h2>
+              <h2>{principle.title}</h2>
 
-            <p>
-              We begin by imagining how people will inhabit, use,
-              and experience each space.
-            </p>
-          </article>
-
-          <article className="about-principle">
-            <span className="about-principle-number">
-              02
-            </span>
-
-            <h2>Context-aware.</h2>
-
-            <p>
-              Every project responds thoughtfully to its physical,
-              social, and cultural surroundings.
-            </p>
-          </article>
-
-          <article className="about-principle">
-            <span className="about-principle-number">
-              03
-            </span>
-
-            <h2>Made to endure.</h2>
-
-            <p>
-              From the overall concept to the smallest detail, we
-              create spaces that are meaningful, functional, and
-              lasting.
-            </p>
-          </article>
+              <p>{principle.description}</p>
+            </article>
+          ))}
         </div>
       </section>
     </main>

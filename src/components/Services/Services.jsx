@@ -1,31 +1,92 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { sanityClient } from '../../sanity/client';
 import { servicesQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
 import './services.css';
 
 const Services = () => {
+  const servicesListRef = useRef(null);
+
   const [services, setServices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Get services from Sanity
+
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getServices = async () => {
       try {
         const servicesFromSanity =
-          await sanityClient.fetch(servicesQuery);
+          await sanityClient.fetch(servicesQuery, {
+            language: 'en',
+          });
 
-        setServices(servicesFromSanity);
+        if (isCurrentRequest) {
+          setServices(servicesFromSanity);
+        }
       } catch (fetchError) {
         console.error(fetchError);
-        setError('The services could not be loaded.');
+
+        if (isCurrentRequest) {
+          setError('The services could not be loaded.');
+        }
       } finally {
-        setIsLoading(false);
+        if (isCurrentRequest) {
+          setIsLoading(false);
+        }
       }
     };
 
     getServices();
+
+    return () => {
+      isCurrentRequest = false;
+    };
   }, []);
+
+  // Reveal each service when it enters the screen
+
+  useEffect(() => {
+    if (
+      isLoading ||
+      error ||
+      !servicesListRef.current
+    ) {
+      return;
+    }
+
+    const serviceRows =
+      servicesListRef.current.querySelectorAll(
+        '.services-row'
+      );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+      }
+    );
+
+    serviceRows.forEach((row) => {
+      row.classList.add('reveal-ready');
+      observer.observe(row);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isLoading, error, services]);
 
   return (
     <main className="services-page">
@@ -37,21 +98,19 @@ const Services = () => {
           WHAT WE DO
         </p>
 
-        <h1>
-          From the first idea.
+        <h1 className="page-hero-title">
+          How we shape
           <br />
-          <span>To the final detail.</span>
+          <span>space and experience.</span>
         </h1>
-
-        <p className="services-introduction">
-          One studio, four connected disciplines and a clear
-          process shaped around each project.
-        </p>
       </section>
 
       {/* Services list */}
 
-      <section className="services-list">
+      <section
+        className="services-list"
+        ref={servicesListRef}
+      >
         {isLoading && (
           <p className="services-message">
             Loading services...
@@ -66,24 +125,35 @@ const Services = () => {
 
         {!isLoading &&
           !error &&
-          services.map((service, index) => (
+          services.map((service) => (
             <article
               className="services-row"
               key={service._id}
             >
-              <span className="services-number">
-                {String(service.order || index + 1).padStart(
-                  2,
-                  '0'
-                )}
-              </span>
+              {/* Service title */}
+
+              <div className="services-title">
+                <h2>{service.title}</h2>
+              </div>
+
+              {/* Service description */}
+
+              <div className="services-content">
+                <p className="services-main-description">
+                  {service.shortDescription}
+                </p>
+
+                <p>{service.fullDescription}</p>
+              </div>
+
+              {/* Service image */}
 
               <div className="services-image">
-                {service.image && (
+                {service.image?.asset && (
                   <img
                     src={urlFor(service.image)
                       .width(1000)
-                      .height(750)
+                      .height(550)
                       .fit('crop')
                       .auto('format')
                       .url()}
@@ -91,46 +161,12 @@ const Services = () => {
                       service.imageAlt ||
                       `${service.title} service`
                     }
+                    loading="lazy"
                   />
                 )}
               </div>
-
-              <div className="services-content">
-                <h2>{service.title}</h2>
-
-                <p className="services-main-description">
-                  {service.shortDescription}
-                </p>
-
-                <p>{service.fullDescription}</p>
-              </div>
             </article>
           ))}
-      </section>
-
-      {/* Contact call to action */}
-
-      <section className="services-contact">
-        <p className="services-label">
-          <span></span>
-          START A PROJECT
-        </p>
-
-        <div className="services-contact-content">
-          <h2>
-            Have a space
-            <br />
-            <span>in mind?</span>
-          </h2>
-
-          <a
-            href="#contact"
-            className="services-contact-link"
-          >
-            Let’s talk
-            <span>↗</span>
-          </a>
-        </div>
       </section>
     </main>
   );

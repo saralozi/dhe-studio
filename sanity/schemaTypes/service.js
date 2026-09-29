@@ -1,5 +1,13 @@
 import { defineField, defineType } from 'sanity';
 
+const getEnglishValue = (translations) => {
+  return (
+    translations?.find(
+      (translation) => translation.language === 'en'
+    )?.value || ''
+  );
+};
+
 export const serviceType = defineType({
   name: 'service',
   title: 'Service',
@@ -9,7 +17,7 @@ export const serviceType = defineType({
     defineField({
       name: 'title',
       title: 'Service title',
-      type: 'string',
+      type: 'internationalizedArrayString',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -17,59 +25,74 @@ export const serviceType = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+
+      description:
+        'The URL is generated from the English service title.',
+
       options: {
-        source: 'title',
+        source: (document) =>
+          getEnglishValue(document.title),
         maxLength: 96,
       },
+
       validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'shortDescription',
       title: 'Short description',
-      type: 'text',
-      rows: 3,
+      type: 'internationalizedArrayText',
+
       description:
         'Short text used on the homepage service card.',
-      validation: (Rule) =>
-        Rule.max(250).warning(
-          'Try to keep this under 250 characters.',
-        ),
+
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'fullDescription',
       title: 'Full description',
-      type: 'text',
-      rows: 8,
+      type: 'internationalizedArrayText',
+
       description:
         'The complete service description used on the Services page.',
+
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'image',
       title: 'Service image',
       type: 'image',
+
       options: {
         hotspot: true,
       },
+
       fields: [
         defineField({
           name: 'alt',
           title: 'Alternative text',
-          type: 'string',
+          type: 'internationalizedArrayString',
+
           description:
-            'Describe the image for accessibility.',
+            'Describe the image in each language for accessibility.',
+
+          validation: (Rule) => Rule.required(),
         }),
       ],
+
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'order',
       title: 'Display order',
       type: 'number',
+
       description:
         'Use 1, 2, 3 or 4 to control the service order.',
+
       validation: (Rule) =>
         Rule.required().integer().min(1),
     }),
@@ -80,6 +103,15 @@ export const serviceType = defineType({
       title: 'title',
       subtitle: 'shortDescription',
       media: 'image',
+    },
+
+    prepare({ title, subtitle, media }) {
+      return {
+        title:
+          getEnglishValue(title) || 'Untitled service',
+        subtitle: getEnglishValue(subtitle),
+        media,
+      };
     },
   },
 });

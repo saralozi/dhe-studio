@@ -8,13 +8,16 @@ import Projects from './components/Projects/Projects';
 import ProjectDetails from './components/Projects/ProjectDetails';
 import NotFound from './components/NotFound/NotFound';
 import Contact from './components/Contact/Contact';
+import ScrollToTop from './components/ScrollOnTop/ScrollOnTop';
 
 function App() {
 
   return (
     <>
       <Navbar />
+      <ScrollToTop />
       <Routes>
+
         <Route
           path='/'
           element={<Home />}
@@ -45,11 +48,11 @@ function App() {
           element={<Contact />}
         />
 
-      <Route
-        path="*"
-        element={<NotFound />}
-      />
-    </Routes >
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
+      </Routes >
 
       <Footer />
 

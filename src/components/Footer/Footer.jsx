@@ -19,10 +19,6 @@ const Footer = () => {
     <footer className="footer" id="contact">
       <div className="footer-top">
         <div className="footer-heading">
-          <p className="footer-kicker">
-            <span></span>
-            LET’S START A CONVERSATION
-          </p>
 
           <h2>
             Every great space
@@ -43,14 +39,6 @@ const Footer = () => {
                   {email}
                 </a>
               </dd>
-            </div>
-
-            {/* Phone */}
-
-            <div>
-              <dt>PHONE</dt>
-
-              <dd>Studio number to be added</dd>
             </div>
 
             {/* Social media */}

@@ -48,7 +48,7 @@ const Contact = () => {
       if (!response.ok) {
         throw new Error(
           responseData.message ||
-          'The inquiry could not be sent.'
+            'The inquiry could not be sent.'
         );
       }
 
@@ -61,46 +61,66 @@ const Contact = () => {
       setSubmissionStatus('error');
       setSubmissionMessage(
         error.message ||
-        'Something went wrong. Please try again.'
+          'Something went wrong. Please try again.'
       );
     }
   };
 
   return (
     <main className="contact-page">
+      {/* Introduction */}
+
       <section className="contact-introduction">
         <p className="contact-label">
           <span></span>
           START A PROJECT
         </p>
 
-        <h1>
+        <h1 className="page-hero-title">
           Tell us about
           <br />
           <span>your idea.</span>
         </h1>
 
-        <p className="contact-introduction-text">
-          Share what you have in mind. You do not need to have
-          everything figured out—we will begin with a conversation.
-        </p>
+        <div className="contact-introduction-bottom">
+          <p className="contact-introduction-text">
+            Share what you have in mind. You do not need to have
+            everything figured out—we will begin with a
+            conversation.
+          </p>
+
+          <a
+            href="#project-inquiry"
+            className="contact-scroll-link"
+          >
+            <span>LET’S TALK</span>
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
       </section>
+
+      {/* Project inquiry */}
 
       <section className="contact-form-section">
         <div className="contact-form-heading">
           <p>PROJECT INQUIRY</p>
 
           <h2>
-            A few details to help us understand your project.
+            A few details to help us understand <span className="spanTitleContact">your project.</span>
           </h2>
         </div>
 
         <form
+          id="project-inquiry"
           className="contact-form"
           onSubmit={handleSubmit}
         >
+          {/* Name */}
+
           <div className="contact-field">
-            <label htmlFor="name">Name *</label>
+            <label htmlFor="name">
+              Name <span>*</span>
+            </label>
 
             <input
               id="name"
@@ -113,8 +133,12 @@ const Contact = () => {
             />
           </div>
 
+          {/* Email */}
+
           <div className="contact-field">
-            <label htmlFor="email">Email *</label>
+            <label htmlFor="email">
+              Email <span>*</span>
+            </label>
 
             <input
               id="email"
@@ -126,6 +150,8 @@ const Contact = () => {
               required
             />
           </div>
+
+          {/* Phone */}
 
           <div className="contact-field">
             <label htmlFor="phone">Phone</label>
@@ -140,9 +166,11 @@ const Contact = () => {
             />
           </div>
 
+          {/* Project message */}
+
           <div className="contact-field contact-message-field">
             <label htmlFor="message">
-              Tell us about your project *
+              Tell us about your project <span>*</span>
             </label>
 
             <textarea
@@ -152,15 +180,19 @@ const Contact = () => {
               onChange={handleChange}
               rows="8"
               maxLength="3000"
+              placeholder="Tell us about the space, location, approximate area, timeline, or anything else you would like us to know."
               required
             />
 
             <p className="contact-field-help">
-              You do not need to include your contact details here.
-              You can mention the project type, location, approximate
-              area, needs, preferred style, timeline, or budget.
+              You do not need to include your contact details
+              here. You can mention the project type, location,
+              approximate area, needs, preferred style, timeline,
+              or budget.
             </p>
           </div>
+
+          {/* Consent */}
 
           <label className="contact-consent">
             <input
@@ -172,10 +204,12 @@ const Contact = () => {
             />
 
             <span>
-              I agree that DHÈ Studio may use these details to respond
-              to my inquiry.
+              I agree that DHÈ Studio may use these details to
+              respond to my inquiry.
             </span>
           </label>
+
+          {/* Submit button */}
 
           <button
             type="submit"
@@ -188,6 +222,8 @@ const Contact = () => {
 
             <span>↗</span>
           </button>
+
+          {/* Result message */}
 
           {submissionMessage && (
             <p

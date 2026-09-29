@@ -1,32 +1,46 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './home.css';
+
 import { sanityClient } from '../../sanity/client';
-import { servicesQuery, featuredProjectsQuery } from '../../sanity/queries';
-import { urlFor } from '../../sanity/image'
+import {
+  featuredProjectsQuery,
+  servicesQuery,
+} from '../../sanity/queries';
+import { urlFor } from '../../sanity/image';
+
+import './home.css';
 
 const Home = () => {
-
   // Hero animation
-  const [startAnimation, setStartAnimation] = useState(false);
+
+  const [startAnimation, setStartAnimation] =
+    useState(false);
 
   // Projects carousel
-  const [currentProject, setCurrentProject] = useState(0);
-  const projectTrackRef = useRef(null); // create tag
+
+  const [currentProject, setCurrentProject] =
+    useState(0);
+
+  const projectTrackRef = useRef(null);
 
   // Services from Sanity
+
   const [services, setServices] = useState([]);
-  const [servicesLoading, setServicesLoading] = useState(true);
-  const [servicesError, setServicesError] = useState('');
+  const [servicesLoading, setServicesLoading] =
+    useState(true);
+  const [servicesError, setServicesError] =
+    useState('');
 
   // Featured projects from Sanity
+
   const [projects, setProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] =
     useState(true);
   const [projectsError, setProjectsError] =
     useState('');
 
-  // Start hero animation
+  // Start the continuous hero animation
+
   useEffect(() => {
     const animationTimer = setTimeout(() => {
       setStartAnimation(true);
@@ -37,51 +51,91 @@ const Home = () => {
     };
   }, []);
 
-  // Get the services from Sanity
+  // Get services from Sanity
+
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getServices = async () => {
       try {
         const servicesFromSanity =
-          await sanityClient.fetch(servicesQuery)
-        setServices(servicesFromSanity)
-      } catch (fetchError) {
-        console.error(fetchError)
-        setServicesError('The services could not be loaded.')
-      } finally {
-        setServicesLoading(false)
-      }
+          await sanityClient.fetch(servicesQuery, {
+            language: 'en',
+          });
 
-    }
-    getServices()
-  }, [])
+        if (isCurrentRequest) {
+          setServices(servicesFromSanity);
+        }
+      } catch (fetchError) {
+        console.error(fetchError);
+
+        if (isCurrentRequest) {
+          setServicesError(
+            'The services could not be loaded.'
+          );
+        }
+      } finally {
+        if (isCurrentRequest) {
+          setServicesLoading(false);
+        }
+      }
+    };
+
+    getServices();
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, []);
 
   // Get featured projects from Sanity
+
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const getFeaturedProjects = async () => {
       try {
         const projectsFromSanity =
           await sanityClient.fetch(
-            featuredProjectsQuery
+            featuredProjectsQuery,
+            {
+              language: 'en',
+            }
           );
 
-        setProjects(projectsFromSanity);
-        setCurrentProject(0);
+        if (isCurrentRequest) {
+          setProjects(projectsFromSanity);
+          setCurrentProject(0);
+        }
       } catch (fetchError) {
         console.error(fetchError);
-        setProjectsError(
-          'The featured projects could not be loaded.'
-        );
+
+        if (isCurrentRequest) {
+          setProjectsError(
+            'The featured projects could not be loaded.'
+          );
+        }
       } finally {
-        setProjectsLoading(false);
+        if (isCurrentRequest) {
+          setProjectsLoading(false);
+        }
       }
     };
 
     getFeaturedProjects();
+
+    return () => {
+      isCurrentRequest = false;
+    };
   }, []);
 
   // Move the projects carousel
+
   const showProject = (newIndex) => {
-    if (newIndex < 0 || newIndex >= projects.length) {
+    if (
+      newIndex < 0 ||
+      newIndex >= projects.length
+    ) {
       return;
     }
 
@@ -103,7 +157,8 @@ const Home = () => {
 
   return (
     <main className="home">
-      {/*Hero Section */}
+      {/* Hero section */}
+
       <section
         className="home-immersive"
         aria-label="Explore a modern residence"
@@ -145,25 +200,29 @@ const Home = () => {
             </h1>
 
             <p className="home-hero-description">
-              A dialogue between people, place, and possibility.
+              A dialogue between people, place, and
+              possibility.
             </p>
           </div>
 
           <div className="home-hero-bottom">
-            <a href="#about" className="home-scroll-hint">
+            <a
+              href="#about"
+              className="home-scroll-hint"
+            >
               SCROLL TO DISCOVER
               <span>↓</span>
             </a>
-
-            <span className="home-hero-note">
-              A DIFFERENT PERSPECTIVE ON HOME.
-            </span>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="home-about home-section" id="about">
+      {/* About section */}
+
+      <section
+        className="home-about home-section"
+        id="about"
+      >
         <p className="home-section-label">
           <span className="home-orange-square"></span>
           01 / THE STUDIO
@@ -171,20 +230,25 @@ const Home = () => {
 
         <div className="home-about-content">
           <h2>
-            Good design starts
+            Architecture shaped by
             <br />
-            with <span>the way we live.</span>
+            <span>people and place.</span>
           </h2>
 
           <div className="home-about-bottom">
             <p>
-              At DHÈ Studio, we bring architecture, interiors, and
-              the spaces in between into one thoughtful conversation.
-              We create places that feel personal, respond to their
-              surroundings, and make everyday life a little better.
+              DHÈ is an architectural and interior design
+              studio focused on the experiences that happen
+              within a space. With attention to context,
+              culture, materiality and sustainability, we
+              create places that are meaningful, functional
+              and made to endure.
             </p>
 
-            <Link to="/about" className="home-page-link">
+            <Link
+              to="/about"
+              className="home-page-link"
+            >
               Meet the studio
               <span>↗</span>
             </Link>
@@ -193,6 +257,7 @@ const Home = () => {
       </section>
 
       {/* Services section */}
+
       <section
         className="home-services home-section"
         id="services"
@@ -205,13 +270,16 @@ const Home = () => {
             </p>
 
             <h2>
-              From the first idea.
+              From the first idea
               <br />
-              To the final detail.
+              to the final detail.
             </h2>
           </div>
 
-          <Link to="/services" className="home-page-link">
+          <Link
+            to="/services"
+            className="home-page-link"
+          >
             Explore our services
             <span>↗</span>
           </Link>
@@ -223,7 +291,6 @@ const Home = () => {
               Loading services...
             </p>
           )}
-
 
           {servicesError && (
             <p className="home-service-message home-service-error">
@@ -238,38 +305,45 @@ const Home = () => {
                 className="home-service-card"
                 key={service._id}
               >
-                <div className="home-service-image">
-                  {service.image && (
-                    <img
-                      src={urlFor(service.image)
-                        .width(900)
-                        .height(700)
-                        .fit('crop')
-                        .auto('format')
-                        .url()}
-                      alt={
-                        service.imageAlt ||
-                        `${service.title} service`
-                      }
-                      loading="lazy"
-                    />
-                  )}
+                <Link
+                  to="/services"
+                  className="home-service-link"
+                  aria-label={`View ${service.title} service`}
+                >
+                  <div className="home-service-image">
+                    {service.image?.asset && (
+                      <img
+                        src={urlFor(service.image)
+                          .width(900)
+                          .height(700)
+                          .fit('crop')
+                          .auto('format')
+                          .url()}
+                        alt={
+                          service.imageAlt ||
+                          `${service.title} service`
+                        }
+                        loading="lazy"
+                      />
+                    )}
 
-                  <span>
-                    {String(
-                      service.order || index + 1
-                    ).padStart(2, '0')}
-                  </span>
-                </div>
+                    <span>
+                      {String(
+                        service.order || index + 1
+                      ).padStart(2, '0')}
+                    </span>
+                  </div>
 
-                <h3>{service.title}</h3>
+                  <h3>{service.title}</h3>
 
-                <p>{service.shortDescription}</p>
+                  <p>{service.shortDescription}</p>
+                </Link>
               </article>
             ))}
-
         </div>
       </section>
+
+      {/* Projects section */}
 
       <section className="home-projects home-section">
         <div className="home-section-heading">
@@ -286,7 +360,10 @@ const Home = () => {
             </h2>
           </div>
 
-          <Link to="/projects" className="home-page-link">
+          <Link
+            to="/projects"
+            className="home-page-link"
+          >
             View all projects
             <span>↗</span>
           </Link>
@@ -325,11 +402,15 @@ const Home = () => {
                     className="home-project-card"
                     key={project._id}
                   >
-                    <Link to={`/projects/${project.slug}`}>
+                    <Link
+                      to={`/projects/${project.slug}`}
+                    >
                       <div className="home-project-image">
-                        {project.coverImage && (
+                        {project.coverImage?.asset && (
                           <img
-                            src={urlFor(project.coverImage)
+                            src={urlFor(
+                              project.coverImage
+                            )
                               .width(1400)
                               .height(1000)
                               .fit('crop')
@@ -361,10 +442,9 @@ const Home = () => {
                         <span>
                           {project.projectType}
                           {' / '}
-                          {String(project.order || 1).padStart(
-                            2,
-                            '0'
-                          )}
+                          {String(
+                            project.order || 1
+                          ).padStart(2, '0')}
                         </span>
                       </div>
                     </Link>
@@ -373,16 +453,11 @@ const Home = () => {
               </div>
 
               <div className="home-carousel-footer">
-                <span>
-                  SPACES TO LIVE. ROOM TO IMAGINE.
-                </span>
-
                 <div className="home-carousel-controls">
                   <span>
-                    {String(currentProject + 1).padStart(
-                      2,
-                      '0'
-                    )}
+                    {String(
+                      currentProject + 1
+                    ).padStart(2, '0')}
                     {' — '}
                     {String(projects.length).padStart(
                       2,
@@ -405,7 +480,8 @@ const Home = () => {
                     type="button"
                     aria-label="Next project"
                     disabled={
-                      currentProject === projects.length - 1
+                      currentProject ===
+                      projects.length - 1
                     }
                     onClick={() =>
                       showProject(currentProject + 1)
