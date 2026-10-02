@@ -1,4 +1,8 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -13,6 +17,14 @@ import { urlFor } from '../../sanity/image';
 
 import './projects.css';
 
+const categoryOptions = [
+  'all',
+  'Architectural Design',
+  'Interior Design',
+  'Restoration',
+  'Consulting',
+];
+
 const Projects = () => {
   const { language } = useLanguage();
 
@@ -24,6 +36,12 @@ const Projects = () => {
     useState(true);
   const [projectsError, setProjectsError] =
     useState('');
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] =
+    useState('all');
+
+  // Get projects from Sanity
 
   useEffect(() => {
     let isCurrentRequest = true;
@@ -61,6 +79,57 @@ const Projects = () => {
     };
   }, [language, text.error]);
 
+  // Search and category filtering
+
+  const filteredProjects = useMemo(() => {
+    const normalizedSearchTerm = searchTerm
+      .trim()
+      .toLocaleLowerCase(language);
+
+    return projects.filter((project) => {
+      const translatedCategory =
+        text.categories[project.category] ||
+        project.category ||
+        '';
+
+      const matchesCategory =
+        activeCategory === 'all' ||
+        project.category === activeCategory;
+
+      const searchableProjectText = [
+        project.title,
+        translatedCategory,
+        project.projectType,
+        project.location,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase(language);
+
+      const matchesSearch =
+        normalizedSearchTerm === '' ||
+        searchableProjectText.includes(
+          normalizedSearchTerm
+        );
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [
+    projects,
+    searchTerm,
+    activeCategory,
+    language,
+    text.categories,
+  ]);
+
+  const getCategoryLabel = (category) => {
+    if (category === 'all') {
+      return text.allCategories;
+    }
+
+    return text.categories[category] || category;
+  };
+
   return (
     <main className="projects-page">
       {/* Page introduction */}
@@ -78,93 +147,153 @@ const Projects = () => {
         </h1>
       </section>
 
-      {/* Projects list */}
+      {/* Projects archive */}
 
-      <section className="projects-grid">
-        {projectsLoading && (
-          <p className="projects-message">
-            {text.loading}
-          </p>
-        )}
+      <section className="projects-archive">
+        {/* Search and filters */}
 
-        {projectsError && (
-          <p className="projects-message projects-error">
-            {projectsError}
-          </p>
-        )}
+        <div className="projects-toolbar">
+          <div className="projects-search">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
 
-        {!projectsLoading &&
-          !projectsError &&
-          projects.length === 0 && (
+              <path d="M16.5 16.5L21 21" />
+            </svg>
+
+            <input
+              id="projects-search"
+              type="search"
+              value={searchTerm}
+              onChange={(event) =>
+                setSearchTerm(event.target.value)
+              }
+              placeholder={text.searchPlaceholder}
+              aria-label={text.searchLabel}
+            />
+          </div>
+
+          <div
+            className="projects-filters"
+            aria-label={text.filterLabel}
+          >
+            {categoryOptions.map((category) => (
+              <button
+                type="button"
+                className={
+                  activeCategory === category
+                    ? 'projects-filter active'
+                    : 'projects-filter'
+                }
+                key={category}
+                aria-pressed={
+                  activeCategory === category
+                }
+                onClick={() =>
+                  setActiveCategory(category)
+                }
+              >
+                {getCategoryLabel(category)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Projects grid */}
+
+        <div className="projects-grid">
+          {projectsLoading && (
             <p className="projects-message">
-              {text.empty}
+              {text.loading}
             </p>
           )}
 
-        {!projectsLoading &&
-          !projectsError &&
-          projects.map((project, index) => {
-            const translatedCategory =
-              text.categories[project.category] ||
-              project.category;
+          {projectsError && (
+            <p className="projects-message projects-error">
+              {projectsError}
+            </p>
+          )}
 
-            return (
-              <article
-                className={`projects-card projects-card-${index + 1}`}
-                key={project._id}
-              >
-                <Link
-                  to={`/projects/${project.slug}`}
-                  aria-label={`${text.viewProject} ${project.title}`}
+          {!projectsLoading &&
+            !projectsError &&
+            projects.length === 0 && (
+              <p className="projects-message">
+                {text.empty}
+              </p>
+            )}
+
+          {!projectsLoading &&
+            !projectsError &&
+            projects.length > 0 &&
+            filteredProjects.length === 0 && (
+              <p className="projects-message">
+                {text.noResults}
+              </p>
+            )}
+
+          {!projectsLoading &&
+            !projectsError &&
+            filteredProjects.map((project) => {
+              const translatedCategory =
+                text.categories[project.category] ||
+                project.category;
+
+              return (
+                <article
+                  className="projects-card"
+                  key={project._id}
                 >
-                  <div className="projects-card-image">
-                    {project.coverImage?.asset && (
-                      <img
-                        src={urlFor(project.coverImage)
-                          .width(1400)
-                          .height(1000)
-                          .fit('crop')
-                          .auto('format')
-                          .url()}
-                        alt={
-                          project.coverImageAlt ||
-                          `${project.title} ${text.imageFallback}`
-                        }
-                        loading="lazy"
-                      />
-                    )}
-
-                    <span
-                      className="projects-card-arrow"
-                      aria-hidden="true"
-                    >
-                      ↗
-                    </span>
-
-                    <span className="projects-card-category">
-                      {translatedCategory}
-                    </span>
-                  </div>
-
-                  <div className="projects-card-information">
-                    <div>
-                      <p>
-                        {translatedCategory}
-                        {' · '}
-                        {String(
-                          project.order || index + 1
-                        ).padStart(2, '0')}
-                      </p>
-
-                      <h2>{project.title}</h2>
+                  <Link
+                    to={`/projects/${project.slug}`}
+                    aria-label={`${text.viewProject} ${project.title}`}
+                  >
+                    <div className="projects-card-image">
+                      {project.coverImage?.asset && (
+                        <img
+                          src={urlFor(
+                            project.coverImage
+                          )
+                            .width(1200)
+                            .height(900)
+                            .fit('crop')
+                            .auto('format')
+                            .url()}
+                          alt={
+                            project.coverImageAlt ||
+                            `${project.title} ${text.imageFallback}`
+                          }
+                          loading="lazy"
+                        />
+                      )}
                     </div>
 
-                    <p>{project.projectType}</p>
-                  </div>
-                </Link>
-              </article>
-            );
-          })}
+                    <div className="projects-card-information">
+                      <div className="projects-card-text">
+                        <h2>{project.title}</h2>
+
+                        <p className="projects-card-category">
+                          {translatedCategory}
+                        </p>
+                      </div>
+
+                      <span
+                        className="projects-card-arrow"
+                        aria-hidden="true"
+                      >
+                        ↗
+                      </span>
+                    </div>
+                  </Link>
+                </article>
+              );
+            })}
+        </div>
       </section>
     </main>
   );

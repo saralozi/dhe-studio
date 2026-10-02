@@ -31,6 +31,11 @@ export const translations = {
       empty: 'No projects have been published yet.',
       viewProject: 'View',
       imageFallback: 'project',
+      searchLabel: 'Search projects',
+      searchPlaceholder: 'Search projects',
+      filterLabel: 'Filter projects by category',
+      allCategories: 'All',
+      noResults: 'No projects match your search.',
 
       categories: {
         'Architectural Design': 'Architectural Design',
@@ -54,6 +59,14 @@ export const translations = {
 
       imageFallback: 'project',
       galleryImageFallback: 'project view',
+
+      galleryLabel: 'Project gallery',
+      openImage: 'Open image',
+      closeGallery: 'Close gallery',
+      close: 'Close',
+      previousImage: 'Previous image',
+      nextImage: 'Next image',
+      emptyGallery: 'No gallery images have been added yet.',
 
       statuses: {
         Concept: 'Concept',
@@ -215,7 +228,13 @@ export const translations = {
       empty: 'Ende nuk është publikuar asnjë projekt.',
       viewProject: 'Shiko',
       imageFallback: 'projekt',
-
+      searchLabel: 'Kërko projekte',
+      searchPlaceholder: 'Kërko projekte',
+      filterLabel:
+        'Filtro projektet sipas kategorisë',
+      allCategories: 'Të gjitha',
+      noResults:
+        'Asnjë projekt nuk përputhet me kërkimin tuaj.',
       categories: {
         'Architectural Design': 'Dizajn Arkitekturor',
         'Interior Design': 'Dizajn i Brendshëm',
@@ -238,6 +257,14 @@ export const translations = {
 
       imageFallback: 'projekt',
       galleryImageFallback: 'pamje e projektit',
+
+      galleryLabel: 'Galeria e projektit',
+      openImage: 'Hap imazhin',
+      closeGallery: 'Mbyll galerine',
+      close: 'Mbyll',
+      previousImage: 'Imazhi i meparshem',
+      nextImage: 'Imazhi tjeter',
+      emptyGallery: 'Nuk jane shtuar ende imazhe ne galeri.',
 
       statuses: {
         Concept: 'Koncept',
@@ -399,7 +426,13 @@ export const translations = {
       empty: 'Henüz yayınlanmış bir proje bulunmuyor.',
       viewProject: 'Görüntüle',
       imageFallback: 'projesi',
-
+      searchLabel: 'Proje ara',
+      searchPlaceholder: 'Proje ara',
+      filterLabel:
+        'Projeleri kategoriye göre filtrele',
+      allCategories: 'Tümü',
+      noResults:
+        'Aramanızla eşleşen proje bulunamadı.',
       categories: {
         'Architectural Design': 'Mimari Tasarım',
         'Interior Design': 'İç Mekân Tasarımı',
@@ -420,6 +453,13 @@ export const translations = {
       status: 'DURUM',
       area: 'ALAN',
 
+      galleryLabel: 'Proje galerisi',
+      openImage: 'Görseli aç',
+      closeGallery: 'Galeriyi kapat',
+      close: 'Kapat',
+      previousImage: 'Önceki görsel',
+      nextImage: 'Sonraki görsel',
+      emptyGallery: 'Henüz galeri görseli eklenmedi.',
       imageFallback: 'projesi',
       galleryImageFallback: 'proje görünümü',
 

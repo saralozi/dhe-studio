@@ -211,6 +211,11 @@
   border-color: #ef623d;
 }
 
+.home-page-link:focus-visible {
+  outline: 2px solid #55534d;
+  outline-offset: 5px;
+}
+
 /* About section */
 
 .home-about {
@@ -287,7 +292,7 @@
   letter-spacing: -2px;
 }
 
-/* Services */
+/* Services section */
 
 .home-services {
   background-color: #eae8e2;
@@ -396,48 +401,70 @@
 /* Projects section */
 
 .home-projects {
-  overflow: hidden;
-
   background-color: #eae8e2;
   border-top: 1px solid #d9d7d0;
 }
+
+/* Project carousel */
+
+.home-project-carousel {
+  position: relative;
+}
+
+/* Project track */
 
 .home-project-track {
   display: flex;
   gap: 28px;
 
-  overflow-x: auto;
-  padding-bottom: 8px;
+  overflow: hidden;
 
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  overscroll-behavior-x: contain;
 }
 
 .home-project-track::-webkit-scrollbar {
   display: none;
 }
 
+/* Project card */
+
 .home-project-card {
-  flex: 0 0 calc(57% - 14px);
+  flex: 0 0 calc((100% - 56px) / 3);
   min-width: 0;
 
   scroll-snap-align: start;
 }
 
 .home-project-card > a {
+  display: block;
+
   color: inherit;
   text-decoration: none;
 }
 
+.home-project-card > a:focus-visible {
+  outline: 2px solid #55534d;
+  outline-offset: 5px;
+}
+
+/* Project image */
+
 .home-project-image {
   position: relative;
 
-  aspect-ratio: 1.42;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
+
+  background-color: #d0cec7;
 }
 
 .home-project-image img {
+  display: block;
+
   width: 100%;
   height: 100%;
 
@@ -447,121 +474,91 @@
 }
 
 .home-project-card:hover .home-project-image img {
-  transform: scale(1.04);
+  transform: scale(1.035);
 }
 
-.home-project-arrow {
+/* Project title */
+
+.home-project-card h3 {
+  margin: 18px 0 0;
+
+  color: #181818;
+
+  font-size: clamp(19px, 1.7vw, 25px);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+
+  transition: color 0.25s ease;
+}
+
+.home-project-card:hover h3 {
+  color: #ef623d;
+}
+
+/* Minimal carousel arrows */
+
+.home-project-control {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  z-index: 5;
+  top: 42%;
 
   display: grid;
   place-items: center;
 
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 60px;
 
-  border-radius: 50%;
-  background-color: #eae8e2;
-  color: #181818;
-
-  font-size: 23px;
-}
-
-.home-project-category {
-  position: absolute;
-  left: 21px;
-  bottom: 20px;
-
-  padding: 8px 12px;
-
-  background-color: rgba(245, 243, 238, 0.93);
-  color: #181818;
-
-  font-size: 12px;
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-}
-
-.home-project-information {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-
-  margin-top: 21px;
-}
-
-.home-project-information h3 {
-  margin: 0;
-
-  color: #181818;
-
-  font-size: 21px;
-  font-weight: 500;
-  letter-spacing: -0.6px;
-}
-
-.home-project-information > span {
-  color: #73726d;
-  font-size: 12px;
-}
-
-/* Carousel footer */
-
-.home-carousel-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-
-  margin-top: 36px;
-  padding-top: 21px;
-
-  border-top: 1px solid #d9d7d0;
-}
-
-.home-carousel-controls {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.home-carousel-controls > span {
-  margin-right: 20px;
-
-  color: #73726d;
-  font-size: 12px;
-}
-
-.home-carousel-controls button {
-  display: grid;
-  place-items: center;
-
-  width: 42px;
-  height: 42px;
-
-  border: 1px solid #b7b5ac;
-  border-radius: 50%;
+  padding: 0;
+  border: 0;
 
   background: transparent;
   color: #181818;
 
-  font-size: 19px;
+  font-family: inherit;
+  font-size: 27px;
+  font-weight: 300;
+  line-height: 1;
+
   cursor: pointer;
 
+  transform: translateY(-50%);
+
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    color 0.25s ease,
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 
-.home-carousel-controls button:hover:not(:disabled) {
-  background-color: #181818;
-  color: #ffffff;
+.home-project-control-left {
+  left: -55px;
 }
 
-.home-carousel-controls button:disabled {
+.home-project-control-right {
+  right: -55px;
+}
+
+.home-project-control-left:hover:not(:disabled) {
+  color: #ef623d;
+  transform: translate(-4px, -50%);
+}
+
+.home-project-control-right:hover:not(:disabled) {
+  color: #ef623d;
+  transform: translate(4px, -50%);
+}
+
+.home-project-control:focus-visible {
+  outline: 1px solid #181818;
+  outline-offset: 4px;
+}
+
+/* Disabled arrows */
+
+.home-project-control:disabled {
+  color: #77756e;
   cursor: default;
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 /* Loading and error messages */
@@ -673,10 +670,20 @@
     font-size: 17px;
   }
 
-  .home-project-information {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
+  .home-project-track {
+    gap: 20px;
+  }
+
+  .home-project-card {
+    flex-basis: calc((100% - 20px) / 2);
+  }
+
+  .home-project-control-left {
+    left: -45px;
+  }
+
+  .home-project-control-right {
+    right: -45px;
   }
 }
 
@@ -771,6 +778,8 @@
     margin-top: 25px;
   }
 
+  /* Mobile services */
+
   .home-service-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 33px 16px;
@@ -798,30 +807,62 @@
     line-height: 1.7;
   }
 
+  /* Mobile projects */
+
   .home-project-track {
-    gap: 17px;
+    gap: 16px;
   }
 
   .home-project-card {
-    flex-basis: 88%;
+    flex-basis: 100%;
   }
 
   .home-project-image {
-    aspect-ratio: 4 / 4.4;
+    aspect-ratio: 4 / 3;
   }
 
-  .home-project-information h3 {
-    font-size: 19px;
+  .home-project-card h3 {
+    margin-top: 14px;
+    font-size: 20px;
   }
 
-  .home-carousel-controls > span {
-    margin-right: 9px;
-    font-size: 11px;
+  /* Mobile carousel arrows */
+
+  .home-project-control {
+    top: 42%;
+
+    width: 34px;
+    height: 58px;
+
+    background-color: rgba(234, 232, 226, 0.9);
+    color: #181818;
+
+    font-size: 22px;
+
+    backdrop-filter: blur(4px);
   }
 
-  .home-carousel-controls button {
-    width: 35px;
-    height: 35px;
+  .home-project-control-left {
+    left: 0;
+  }
+
+  .home-project-control-right {
+    right: 0;
+  }
+
+  .home-project-control-left:hover:not(:disabled) {
+    color: #ef623d;
+    transform: translateY(-50%);
+  }
+
+  .home-project-control-right:hover:not(:disabled) {
+    color: #ef623d;
+    transform: translateY(-50%);
+  }
+
+  .home-project-control:disabled {
+    background-color: rgba(234, 232, 226, 0.65);
+    opacity: 0.45;
   }
 }
 
@@ -838,11 +879,19 @@
   }
 
   .home-service-image img,
-  .home-service-card h3 {
+  .home-service-card h3,
+  .home-project-image img,
+  .home-project-card h3,
+  .home-project-control {
     transition: none;
   }
 
-  .home-service-image-link:hover .home-service-image img {
+  .home-service-image-link:hover .home-service-image img,
+  .home-project-card:hover .home-project-image img {
     transform: none;
+  }
+
+  .home-project-track {
+    scroll-behavior: auto;
   }
 }

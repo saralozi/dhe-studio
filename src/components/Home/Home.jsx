@@ -21,7 +21,6 @@ const Home = () => {
 
   const translations = getTranslations(language);
   const text = translations.homePage;
-  const projectsText = translations.projectsPage;
 
   // Hero animation
 
@@ -32,6 +31,9 @@ const Home = () => {
 
   const [currentProject, setCurrentProject] =
     useState(0);
+
+  const [projectsPerView, setProjectsPerView] =
+    useState(3);
 
   const projectTrackRef = useRef(null);
 
@@ -50,6 +52,34 @@ const Home = () => {
     useState(true);
   const [projectsError, setProjectsError] =
     useState('');
+
+  // Change the number of visible projects responsively
+
+  useEffect(() => {
+    const updateProjectsPerView = () => {
+      if (window.innerWidth <= 760) {
+        setProjectsPerView(1);
+      } else if (window.innerWidth <= 1100) {
+        setProjectsPerView(2);
+      } else {
+        setProjectsPerView(3);
+      }
+    };
+
+    updateProjectsPerView();
+
+    window.addEventListener(
+      'resize',
+      updateProjectsPerView
+    );
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        updateProjectsPerView
+      );
+    };
+  }, []);
 
   // Start the continuous hero animation
 
@@ -120,7 +150,7 @@ const Home = () => {
           );
 
         if (isCurrentRequest) {
-          setProjects(projectsFromSanity);
+          setProjects(projectsFromSanity.slice(0, 6));
           setCurrentProject(0);
         }
       } catch (fetchError) {
@@ -145,30 +175,54 @@ const Home = () => {
 
   // Move the projects carousel
 
+  const maximumProjectIndex = Math.max(
+    projects.length - projectsPerView,
+    0
+  );
+
   const showProject = (newIndex) => {
     if (
       newIndex < 0 ||
-      newIndex >= projects.length
+      newIndex > maximumProjectIndex
     ) {
       return;
     }
 
-    const projectCards =
-      projectTrackRef.current?.children;
+    const projectTrack = projectTrackRef.current;
+    const projectCards = projectTrack?.children;
+    const selectedProject = projectCards?.[newIndex];
 
-    if (!projectCards?.[newIndex]) {
+    if (!projectTrack || !selectedProject) {
       return;
     }
 
     setCurrentProject(newIndex);
 
-    projectCards[newIndex].scrollIntoView({
+    const trackPosition =
+      projectTrack.getBoundingClientRect();
+
+    const projectPosition =
+      selectedProject.getBoundingClientRect();
+
+    const scrollPosition =
+      projectTrack.scrollLeft +
+      projectPosition.left -
+      trackPosition.left;
+
+    projectTrack.scrollTo({
+      left: scrollPosition,
       behavior: 'smooth',
-      block: 'nearest',
-      inline: 'start',
     });
   };
 
+  useEffect(() => {
+    if (currentProject > maximumProjectIndex) {
+      showProject(maximumProjectIndex);
+    }
+  }, [
+    currentProject,
+    maximumProjectIndex,
+  ]);
   return (
     <main className="home">
       {/* Hero section */}
@@ -412,113 +466,70 @@ const Home = () => {
         {!projectsLoading &&
           !projectsError &&
           projects.length > 0 && (
-            <>
+            <div className="home-project-carousel">
+              <button
+                type="button"
+                className="home-project-control home-project-control-left"
+                aria-label={text.previousProject}
+                disabled={currentProject === 0}
+                onClick={() =>
+                  showProject(currentProject - 1)
+                }
+              >
+                ←
+              </button>
+
               <div
                 className="home-project-track"
                 ref={projectTrackRef}
               >
-                {projects.map((project) => {
-                  const translatedCategory =
-                    projectsText.categories[
-                      project.category
-                    ] || project.category;
-
-                  return (
-                    <article
-                      className="home-project-card"
-                      key={project._id}
+                {projects.map((project) => (
+                  <article
+                    className="home-project-card"
+                    key={project._id}
+                  >
+                    <Link
+                      to={`/projects/${project.slug}`}
+                      aria-label={`${text.viewProject} ${project.title}`}
                     >
-                      <Link
-                        to={`/projects/${project.slug}`}
-                      >
-                        <div className="home-project-image">
-                          {project.coverImage?.asset && (
-                            <img
-                              src={urlFor(
-                                project.coverImage
-                              )
-                                .width(1400)
-                                .height(1000)
-                                .fit('crop')
-                                .auto('format')
-                                .url()}
-                              alt={
-                                project.coverImageAlt ||
-                                `${project.title} ${text.projectImageFallback}`
-                              }
-                              loading="lazy"
-                            />
-                          )}
+                      <div className="home-project-image">
+                        {project.coverImage?.asset && (
+                          <img
+                            src={urlFor(project.coverImage)
+                              .width(1200)
+                              .height(900)
+                              .fit('crop')
+                              .auto('format')
+                              .url()}
+                            alt={
+                              project.coverImageAlt ||
+                              `${project.title} ${text.projectImageFallback}`
+                            }
+                            loading="lazy"
+                          />
+                        )}
+                      </div>
 
-                          <span
-                            className="home-project-arrow"
-                            aria-hidden="true"
-                          >
-                            ↗
-                          </span>
-
-                          <span className="home-project-category">
-                            {translatedCategory}
-                          </span>
-                        </div>
-
-                        <div className="home-project-information">
-                          <h3>{project.title}</h3>
-
-                          <span>
-                            {project.projectType}
-                            {' / '}
-                            {String(
-                              project.order || 1
-                            ).padStart(2, '0')}
-                          </span>
-                        </div>
-                      </Link>
-                    </article>
-                  );
-                })}
+                      <h3>{project.title}</h3>
+                    </Link>
+                  </article>
+                ))}
               </div>
 
-              <div className="home-carousel-footer">
-                <div className="home-carousel-controls">
-                  <span>
-                    {String(
-                      currentProject + 1
-                    ).padStart(2, '0')}
-                    {' — '}
-                    {String(projects.length).padStart(
-                      2,
-                      '0'
-                    )}
-                  </span>
-
-                  <button
-                    type="button"
-                    aria-label={text.previousProject}
-                    disabled={currentProject === 0}
-                    onClick={() =>
-                      showProject(currentProject - 1)
-                    }
-                  >
-                    ←
-                  </button>
-
-                  <button
-                    type="button"
-                    aria-label={text.nextProject}
-                    disabled={
-                      currentProject ===
-                      projects.length - 1
-                    }
-                    onClick={() =>
-                      showProject(currentProject + 1)
-                    }
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
-            </>
+              <button
+                type="button"
+                className="home-project-control home-project-control-right"
+                aria-label={text.nextProject}
+                disabled={
+                  currentProject === maximumProjectIndex
+                }
+                onClick={() =>
+                  showProject(currentProject + 1)
+                }
+              >
+                →
+              </button>
+            </div>
           )}
       </section>
     </main>
