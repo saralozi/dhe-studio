@@ -345,9 +345,8 @@
   color: #8e321f;
 }
 
-.spanTitleContact {
-  color: #a33f2b;
-
+.contact-form-heading h2 .spanTitleContact {
+  color: #ef623d;
 }
 
 /* Large screens */

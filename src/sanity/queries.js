@@ -52,10 +52,7 @@ export const projectsQuery = `
       projectType[language == "en"][0].value
     ),
 
-    "location": coalesce(
-      location[language == $language][0].value,
-      location[language == "en"][0].value
-    ),
+   location,
 
     year,
     status,
@@ -103,10 +100,7 @@ export const projectBySlugQuery = `
       projectType[language == "en"][0].value
     ),
 
-    "location": coalesce(
-      location[language == $language][0].value,
-      location[language == "en"][0].value
-    ),
+    location,
 
     year,
     status,
@@ -174,11 +168,7 @@ export const featuredProjectsQuery = `
       projectType[language == $language][0].value,
       projectType[language == "en"][0].value
     ),
-
-    "location": coalesce(
-      location[language == $language][0].value,
-      location[language == "en"][0].value
-    ),
+    location,
 
     year,
 

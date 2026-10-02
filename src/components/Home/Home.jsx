@@ -312,9 +312,11 @@ const Home = () => {
                 className="home-service-card"
                 key={service._id}
               >
+                {/* Clickable image */}
+
                 <Link
                   to="/services"
-                  className="home-service-link"
+                  className="home-service-image-link"
                   aria-label={`${text.viewService} ${service.title}`}
                 >
                   <div className="home-service-image">
@@ -340,11 +342,22 @@ const Home = () => {
                       ).padStart(2, '0')}
                     </span>
                   </div>
-
-                  <h3>{service.title}</h3>
-
-                  <p>{service.shortDescription}</p>
                 </Link>
+
+                {/* Clickable title */}
+
+                <Link
+                  to="/services"
+                  className="home-service-title-link"
+                >
+                  <h3>{service.title}</h3>
+                </Link>
+
+                {/* Non-clickable description */}
+
+                <p className="home-service-description">
+                  {service.shortDescription}
+                </p>
               </article>
             ))}
         </div>

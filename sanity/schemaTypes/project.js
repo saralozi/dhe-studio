@@ -90,12 +90,9 @@ export const projectType = defineType({
     defineField({
       name: 'location',
       title: 'Location',
-      type: 'internationalizedArrayString',
-
+      type: 'string',
       description:
-        'Enter the location in English, Albanian and Turkish.',
-
-      validation: (Rule) => Rule.required(),
+        'The same location will be displayed in every language.',
     }),
 
     defineField({
