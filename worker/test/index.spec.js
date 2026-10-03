@@ -1,25 +1,132 @@
-import {
-	env,
-	createExecutionContext,
-	waitOnExecutionContext,
-	SELF,
-} from "cloudflare:test";
-import { describe, it, expect } from "vitest";
-import worker from "../src";
+import { SELF } from 'cloudflare:test';
+import { describe, expect, it } from 'vitest';
 
-describe("Hello World worker", () => {
-	it("responds with Hello World! (unit style)", async () => {
-		const request = new Request("http://example.com");
-		// Create an empty context to pass to `worker.fetch()`.
-		const ctx = createExecutionContext();
-		const response = await worker.fetch(request, env, ctx);
-		// Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
-		await waitOnExecutionContext(ctx);
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
-	});
+describe('DHÈ Studio inquiry API', () => {
+  it('confirms that the API is running', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/'
+    );
 
-	it("responds with Hello World! (integration style)", async () => {
-		const response = await SELF.fetch("http://example.com");
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
-	});
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.message).toBe(
+      'DHÈ Studio inquiry API is running.'
+    );
+  });
+
+  it('accepts a valid inquiry', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/api/inquiry',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Test User',
+          email: 'test@example.com',
+          phone: '+355 600000000',
+          message: 'This is a test project inquiry.',
+          consent: true,
+          language: 'en',
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.message).toBe(
+      'Your inquiry was received successfully.'
+    );
+  });
+
+  it('rejects an inquiry with missing required fields', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/api/inquiry',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: '',
+          email: 'test@example.com',
+          message: '',
+          consent: false,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.message).toBe(
+      'Please complete all required fields.'
+    );
+  });
+
+  it('rejects invalid JSON', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/api/inquiry',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: '{invalid-json}',
+      }
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.message).toBe(
+      'The submitted data is not valid.'
+    );
+  });
+
+  it('rejects a project message longer than 3000 characters', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/api/inquiry',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Test User',
+          email: 'test@example.com',
+          message: 'a'.repeat(3001),
+          consent: true,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.message).toBe(
+      'The project message is too long.'
+    );
+  });
+
+  it('returns 404 for an unknown endpoint', async () => {
+    const response = await SELF.fetch(
+      'http://example.com/unknown'
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(data.success).toBe(false);
+    expect(data.message).toBe(
+      'Endpoint not found.'
+    );
+  });
 });

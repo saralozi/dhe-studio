@@ -24,7 +24,10 @@ const sendJson = (request, data, status = 200) => {
 };
 
 export default {
+  // Worker entry point to handle incoming requests.
   async fetch(request) {
+
+    // Read the request URL to determine the endpoint being called.
     const url = new URL(request.url);
 
     // Allow the browser to check whether it can call the API.
