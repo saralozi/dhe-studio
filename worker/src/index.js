@@ -86,6 +86,20 @@ export default {
         );
       }
 
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(email)) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message: 'Please enter a valid email address.',
+          },
+          400
+        );
+      }
+
       if (message.length > 3000) {
         return sendJson(
           request,
