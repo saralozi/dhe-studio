@@ -23,33 +23,45 @@ const sendJson = (request, data, status = 200) => {
   });
 };
 
-export default {
-  // Worker entry point to handle incoming requests.
-  async fetch(request) {
+const cleanText = (value) => {
+  return typeof value === 'string'
+    ? value.trim()
+    : '';
+};
 
-    // Read the request URL to determine the endpoint being called.
+export default {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Allow the browser to check whether it can call the API.
+    // Browser CORS check
+
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
         headers: {
           ...createHeaders(request),
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Allow-Methods':
+            'POST, OPTIONS',
+          'Access-Control-Allow-Headers':
+            'Content-Type',
         },
       });
     }
 
-    // A simple check that the Worker is running.
-    if (request.method === 'GET' && url.pathname === '/') {
+    // API health check
+
+    if (
+      request.method === 'GET' &&
+      url.pathname === '/'
+    ) {
       return sendJson(request, {
-        message: 'DHÈ Studio inquiry API is running.',
+        message:
+          'DHÈ Studio inquiry API is running.',
       });
     }
 
-    // Receive a new inquiry.
+    // Receive a new inquiry
+
     if (
       request.method === 'POST' &&
       url.pathname === '/api/inquiry'
@@ -63,28 +75,66 @@ export default {
           request,
           {
             success: false,
-            message: 'The submitted data is not valid.',
+            message:
+              'The submitted data is not valid.',
           },
           400
         );
       }
 
-      const name = formData.name?.trim();
-      const email = formData.email?.trim();
-      const phone = formData.phone?.trim();
-      const message = formData.message?.trim();
-      const consent = formData.consent;
-
-      if (!name || !email || !message || consent !== true) {
+      if (
+        !formData ||
+        typeof formData !== 'object' ||
+        Array.isArray(formData)
+      ) {
         return sendJson(
           request,
           {
             success: false,
-            message: 'Please complete all required fields.',
+            message:
+              'The submitted data is not valid.',
           },
           400
         );
       }
+
+      const name = cleanText(formData.name);
+      const email = cleanText(formData.email);
+      const phone = cleanText(formData.phone);
+      const message = cleanText(formData.message);
+      const consent = formData.consent;
+
+      const supportedLanguages = [
+        'en',
+        'sq',
+        'tr',
+      ];
+
+      const language =
+        supportedLanguages.includes(formData.language)
+          ? formData.language
+          : 'en';
+
+      // Required fields
+
+      if (
+        !name ||
+        !email ||
+        !message ||
+        consent !== true
+      ) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'Please complete all required fields.',
+          },
+          400
+        );
+      }
+
+      // Email validation
 
       const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -94,7 +144,45 @@ export default {
           request,
           {
             success: false,
-            message: 'Please enter a valid email address.',
+            message:
+              'Please enter a valid email address.',
+          },
+          400
+        );
+      }
+
+      // Length validation
+
+      if (name.length > 120) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message: 'The name is too long.',
+          },
+          400
+        );
+      }
+
+      if (email.length > 254) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'The email address is too long.',
+          },
+          400
+        );
+      }
+
+      if (phone.length > 50) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'The phone number is too long.',
           },
           400
         );
@@ -105,16 +193,64 @@ export default {
           request,
           {
             success: false,
-            message: 'The project message is too long.',
+            message:
+              'The project message is too long.',
           },
           400
         );
       }
 
-      // AI processing and email delivery will be added later.
+      // Store the validated inquiry in D1
+
+      try {
+        await env.dhe_studio_inquiries_db
+          .prepare(
+            `
+              INSERT INTO inquiries (
+                name,
+                email,
+                phone,
+                message,
+                language,
+                consent_given,
+                email_status
+              )
+              VALUES (?, ?, ?, ?, ?, ?, ?)
+            `
+          )
+          .bind(
+            name,
+            email,
+            phone || null,
+            message,
+            language,
+            1,
+            'pending'
+          )
+          .run();
+      } catch (databaseError) {
+        console.error(
+          'Failed to store inquiry:',
+          databaseError
+        );
+
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'The inquiry could not be saved. Please try again.',
+          },
+          500
+        );
+      }
+
+      // Only return success after D1 finishes saving
+
       return sendJson(request, {
         success: true,
-        message: 'Your inquiry was received successfully.',
+        message:
+          'Your inquiry was received successfully.',
       });
     }
 
