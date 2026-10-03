@@ -1,12 +1,19 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "dhe-studio-inquiries",
-  "main": "src/index.js",
-  "compatibility_date": "2026-09-23",
-  "observability": {
-    "enabled": true
-  },
-  "ai": {
-    "binding": "AI"
-  }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "dhe-studio-inquiries",
+	"main": "src/index.js",
+	"compatibility_date": "2026-09-23",
+	"observability": {
+		"enabled": true
+	},
+	"ai": {
+		"binding": "AI"
+	},
+	"d1_databases": [
+		{
+			"binding": "dhe_studio_inquiries_db",
+			"database_name": "dhe-studio-inquiries-db",
+			"database_id": "43523e74-090c-4788-846e-64846a5178d2"
+		}
+	]
 }
