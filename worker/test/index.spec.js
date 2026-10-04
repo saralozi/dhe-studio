@@ -1,5 +1,7 @@
-import { SELF } from 'cloudflare:test';
-import { describe, expect, it } from 'vitest';
+import {
+	env,
+	SELF,
+} from 'cloudflare:test'; import { describe, expect, it } from 'vitest';
 
 describe('DHÈ Studio inquiry API', () => {
 	it('confirms that the API is running', async () => {
@@ -41,6 +43,35 @@ describe('DHÈ Studio inquiry API', () => {
 		expect(data.message).toBe(
 			'Your inquiry was received successfully.'
 		);
+
+		const savedInquiry =
+			await env.dhe_studio_inquiries_db
+				.prepare(
+					`
+        SELECT
+          name,
+          email,
+          phone,
+          message,
+          language,
+          consent_given,
+          email_status
+        FROM inquiries
+        WHERE email = ?
+      `
+				)
+				.bind('test@example.com')
+				.first();
+
+		expect(savedInquiry).toEqual({
+			name: 'Test User',
+			email: 'test@example.com',
+			phone: '+355 600000000',
+			message: 'This is a test project inquiry.',
+			language: 'en',
+			consent_given: 1,
+			email_status: 'pending',
+		});
 	});
 
 	it('rejects an inquiry with missing required fields', async () => {
