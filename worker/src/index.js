@@ -3,7 +3,8 @@ const allowedOrigins = [
 ];
 
 /* Project brief structure expected from Workers AI */
-
+// Return an object with the following properties:
+// This schema is sent to Workers AI
 const projectBriefSchema = {
   type: 'object',
 
@@ -67,6 +68,7 @@ const projectBriefSchema = {
   additionalProperties: false,
 };
 
+// This array is used by the validation function to check if the AI result has the expected keys
 const projectBriefKeys = [
   'summary',
   'projectType',
@@ -107,6 +109,7 @@ const sendJson = (
 };
 
 /* Text cleaning */
+// AI output cleaning functions to ensure the data is safe and within expected limits
 
 const cleanText = (value) => {
   return typeof value === 'string'
@@ -141,6 +144,16 @@ const cleanAiList = (value) => {
 };
 
 /* Validate the AI result */
+// Check the AI result against the expected schema and ensure it has valid data
+
+// Is an object.
+// Is not an array.
+// Contains every required property.
+// Does not contain unexpected properties.
+// Uses strings for the normal fields.
+// Uses arrays of strings for priorities.
+// Uses arrays of strings for missingInformation.
+// Does not contain empty string values.
 
 const isValidProjectBrief = (brief) => {
   if (
@@ -256,6 +269,13 @@ const normalizeProjectBrief = (brief) => {
 };
 
 /* Safe result used when AI fails */
+// This is used if:
+// - Workers AI is unavailable.
+// - The model request fails.
+// - AI returns invalid JSON.
+// - AI returns the wrong fields.
+// - AI returns incorrect data types.
+// - Another unexpected AI error occurs.
 
 const createFallbackProjectBrief = (
   message
@@ -282,6 +302,7 @@ const createFallbackProjectBrief = (
 };
 
 /* Read the response returned by Workers AI */
+// If it is a string, parse it as JSON. If it is an object, return it as-is. Otherwise, throw an error.
 
 const parseAiResponse = (aiResult) => {
   const response = aiResult?.response;
@@ -304,6 +325,7 @@ const parseAiResponse = (aiResult) => {
 };
 
 /* Generate the structured project brief */
+// Main AI processing function. It sends the visitor's message to Workers AI and returns a structured project brief.
 
 const generateProjectBrief = async ({
   env,
@@ -317,10 +339,13 @@ const generateProjectBrief = async ({
       );
     }
 
+    // call the model with the visitor's message and the system prompt
+    // env.AI is the Workers AI binding configuration
+    // It allows the Worker to call Cloudflare's AI service without manually creating a separate HTTP request
     const aiResult = await env.AI.run(
       '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
       {
-        messages: [
+        messages: [ // system message defines the model's job and rules (model's highest level of instrucions)
           {
             role: 'system',
 
@@ -347,7 +372,7 @@ Return only data matching the supplied JSON Schema.
             `.trim(),
           },
 
-          {
+          { // user message contains the visitor's inquiry and language
             role: 'user',
 
             content: `
@@ -366,14 +391,15 @@ ${message}
             projectBriefSchema,
         },
 
-        temperature: 0.1,
-        max_tokens: 700,
+        temperature: 0.1, // low temp makes the model more consistent, less creative, and less likely to hallucinate
+        max_tokens: 700, // limit how much content the model can generate to avoid excessive output and costs
       }
     );
 
     const parsedBrief =
       parseAiResponse(aiResult);
 
+      // Validate the parsed brief against the expected schema and data types
     if (
       !isValidProjectBrief(parsedBrief)
     ) {
@@ -382,6 +408,7 @@ ${message}
       );
     }
 
+    // Normalize the validated brief to ensure all string fields are cleaned and within expected length limits
     return {
       brief:
         normalizeProjectBrief(
@@ -397,6 +424,7 @@ ${message}
       error
     );
 
+    // Return a fallback brief with the visitor's message and a status indicating that the AI processing failed. The error message is cleaned and truncated to 500 characters for logging purposes.
     return {
       brief:
         createFallbackProjectBrief(
