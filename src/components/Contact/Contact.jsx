@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   useLanguage,
@@ -17,20 +21,159 @@ const initialFormData = {
   consent: false,
 };
 
+const turnstileScriptUrl =
+  'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+
 const Contact = () => {
   const { language } = useLanguage();
 
   const text =
     getTranslations(language).contactPage;
 
+  const turnstileContainerRef = useRef(null);
+  const turnstileWidgetIdRef = useRef(null);
+
   const [formData, setFormData] =
     useState(initialFormData);
+
+  const [turnstileToken, setTurnstileToken] =
+    useState('');
 
   const [submissionStatus, setSubmissionStatus] =
     useState('idle');
 
   const [submissionMessage, setSubmissionMessage] =
     useState('');
+
+  const turnstileSiteKey =
+    import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+  /*
+    Load and render Turnstile once.
+
+    With "interaction-only", normal visitors will not see
+    the widget. It appears only if Cloudflare requires
+    the visitor to complete a challenge.
+  */
+
+  useEffect(() => {
+    let isMounted = true;
+    let renderTimer;
+
+    const renderTurnstile = () => {
+      if (
+        !isMounted ||
+        !window.turnstile ||
+        !turnstileContainerRef.current ||
+        turnstileWidgetIdRef.current !== null
+      ) {
+        return;
+      }
+
+      turnstileWidgetIdRef.current =
+        window.turnstile.render(
+          turnstileContainerRef.current,
+          {
+            sitekey: turnstileSiteKey,
+            theme: 'auto',
+            size: 'flexible',
+            appearance: 'interaction-only',
+            execution: 'render',
+            action: 'contact_inquiry',
+
+            callback: (token) => {
+              if (isMounted) {
+                setTurnstileToken(token);
+                setSubmissionMessage('');
+              }
+            },
+
+            'expired-callback': () => {
+              if (isMounted) {
+                setTurnstileToken('');
+              }
+            },
+
+            'timeout-callback': () => {
+              if (isMounted) {
+                setTurnstileToken('');
+              }
+            },
+
+            'error-callback': () => {
+              if (isMounted) {
+                setTurnstileToken('');
+              }
+            },
+          }
+        );
+    };
+
+    const waitForTurnstile = () => {
+      if (!isMounted) {
+        return;
+      }
+
+      if (window.turnstile) {
+        renderTurnstile();
+        return;
+      }
+
+      renderTimer = window.setTimeout(
+        waitForTurnstile,
+        100
+      );
+    };
+
+    const existingScript = document.querySelector(
+      `script[src="${turnstileScriptUrl}"]`
+    );
+
+    if (existingScript) {
+      waitForTurnstile();
+    } else {
+      const script = document.createElement('script');
+
+      script.src = turnstileScriptUrl;
+      script.async = true;
+      script.defer = true;
+      script.onload = waitForTurnstile;
+
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      isMounted = false;
+
+      if (renderTimer) {
+        window.clearTimeout(renderTimer);
+      }
+
+      if (
+        window.turnstile &&
+        turnstileWidgetIdRef.current !== null
+      ) {
+        window.turnstile.remove(
+          turnstileWidgetIdRef.current
+        );
+
+        turnstileWidgetIdRef.current = null;
+      }
+    };
+  }, [turnstileSiteKey]);
+
+  const resetTurnstile = () => {
+    setTurnstileToken('');
+
+    if (
+      window.turnstile &&
+      turnstileWidgetIdRef.current !== null
+    ) {
+      window.turnstile.reset(
+        turnstileWidgetIdRef.current
+      );
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value, type, checked } =
@@ -46,6 +189,12 @@ const Contact = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!turnstileToken) {
+      setSubmissionStatus('error');
+      setSubmissionMessage(text.securityRequired);
+      return;
+    }
+
     setSubmissionStatus('submitting');
     setSubmissionMessage('');
 
@@ -54,12 +203,15 @@ const Contact = () => {
         'http://localhost:8787/api/inquiry',
         {
           method: 'POST',
+
           headers: {
             'Content-Type': 'application/json',
           },
+
           body: JSON.stringify({
             ...formData,
             language,
+            turnstileToken,
           }),
         }
       );
@@ -76,6 +228,13 @@ const Contact = () => {
 
       setSubmissionStatus('error');
       setSubmissionMessage(text.error);
+    } finally {
+      /*
+        Turnstile tokens can only be used once, so request
+        a new token after every submission attempt.
+      */
+
+      resetTurnstile();
     }
   };
 
@@ -118,6 +277,7 @@ const Contact = () => {
 
           <h2>
             {text.formHeadingFirst}{' '}
+
             <span className="spanTitleContact">
               {text.formHeadingEmphasis}
             </span>
@@ -218,6 +378,14 @@ const Contact = () => {
 
             <span>{text.consent}</span>
           </label>
+
+          {/* Turnstile */}
+
+          <div
+            className="contact-turnstile"
+            ref={turnstileContainerRef}
+            aria-label={text.securityVerification}
+          ></div>
 
           {/* Submit button */}
 

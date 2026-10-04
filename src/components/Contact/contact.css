@@ -25,7 +25,7 @@
   letter-spacing: 1.5px;
 }
 
-.contact-label>span {
+.contact-label > span {
   width: 7px;
   height: 7px;
   flex-shrink: 0;
@@ -98,13 +98,14 @@
 .contact-form-section {
   display: grid;
   grid-template-columns:
-    minmax(260px, 0.75fr) minmax(500px, 1.25fr);
+    minmax(260px, 0.75fr)
+    minmax(500px, 1.25fr);
   gap: 10%;
 
   padding: 110px 6% 130px;
 }
 
-.contact-form-heading>p {
+.contact-form-heading > p {
   margin: 0 0 24px;
 
   color: #ef623d;
@@ -121,6 +122,10 @@
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: -1.8px;
+}
+
+.spanTitleContact {
+  color: #ef623d;
 }
 
 /* Form */
@@ -149,7 +154,7 @@
   text-transform: uppercase;
 }
 
-.contact-field label>span {
+.contact-field label > span {
   color: #ef623d;
 }
 
@@ -263,6 +268,20 @@
   accent-color: #ef623d;
 }
 
+/* Turnstile security verification */
+
+.contact-turnstile {
+  grid-column: 1 / -1;
+
+  width: 100%;
+  min-height: 0;
+}
+
+.contact-turnstile > div {
+  width: 100%;
+  max-width: 100%;
+}
+
 /* Submit button */
 
 .contact-submit {
@@ -291,7 +310,7 @@
     color 0.25s ease;
 }
 
-.contact-submit>span {
+.contact-submit > span {
   color: #ef623d;
   font-size: 18px;
 
@@ -305,7 +324,7 @@
   background-color: #ef623d;
 }
 
-.contact-submit:hover>span {
+.contact-submit:hover > span {
   color: #ffffff;
   transform: translate(3px, -3px);
 }
@@ -345,18 +364,20 @@
   color: #8e321f;
 }
 
-.contact-form-heading h2 .spanTitleContact {
-  color: #ef623d;
-}
-
 /* Large screens */
 
 @media (min-width: 1600px) {
-
   .contact-introduction,
   .contact-form-section {
-    padding-left: max(6%, calc((100vw - 1500px) / 2));
-    padding-right: max(6%, calc((100vw - 1500px) / 2));
+    padding-left: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
+
+    padding-right: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
   }
 }
 
@@ -433,6 +454,7 @@
 
   .contact-message-field,
   .contact-consent,
+  .contact-turnstile,
   .contact-submit,
   .contact-form-message {
     grid-column: 1;
@@ -451,9 +473,8 @@
 /* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
-
   .contact-scroll-link span:last-child,
-  .contact-submit>span {
+  .contact-submit > span {
     transition: none;
   }
 }

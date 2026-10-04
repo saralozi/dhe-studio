@@ -162,6 +162,9 @@ export const translations = {
       success: 'Thank you. Your inquiry has been sent.',
       error: 'Something went wrong. Please try again.',
 
+      securityRequired:
+        'Please complete the security verification.',
+
       scrollLink: 'LET’S TALK',
       formHeadingFirst:
         'A few details to help us understand',
@@ -342,6 +345,9 @@ export const translations = {
       formLabel: 'KËRKESË PËR PROJEKT',
       formHeading:
         'Disa të dhëna që na ndihmojnë të kuptojmë projektin tuaj.',
+
+      securityRequired:
+        'Ju lutemi, përfundoni verifikimin e sigurisë.',
 
       name: 'Emri',
       email: 'Email',
@@ -548,6 +554,8 @@ export const translations = {
       help:
         'Proje türünü, konumu, yaklaşık alanı, ihtiyaçları, tercih edilen stili, zaman planını veya bütçeyi belirtebilirsiniz.',
 
+      securityRequired:
+        'Lütfen güvenlik doğrulamasını tamamlayın.',
       consent:
         'DHÈ Studio’nun talebime yanıt vermek için bu bilgileri kullanmasını kabul ediyorum.',
 
