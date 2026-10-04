@@ -29,6 +29,64 @@ const cleanText = (value) => {
     : '';
 };
 
+// Verify Turnstile token with Cloudflare's Turnstile API
+const verifyTurnstileToken = async ({
+  token,
+  secretKey,
+  remoteIp,
+}) => {
+  if (!secretKey) {
+    console.error(
+      'TURNSTILE_SECRET_KEY is not configured.'
+    );
+
+    return {
+      success: false,
+      internalError: true,
+    };
+  }
+
+  try {
+    const verificationData = {
+      secret: secretKey,
+      response: token,
+    };
+
+    if (remoteIp) {
+      verificationData.remoteip = remoteIp;
+    }
+
+    const response = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(verificationData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Turnstile returned HTTP ${response.status}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(
+      'Turnstile verification failed:',
+      error
+    );
+
+    return {
+      success: false,
+      internalError: true,
+    };
+  }
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -102,6 +160,9 @@ export default {
       const email = cleanText(formData.email);
       const phone = cleanText(formData.phone);
       const message = cleanText(formData.message);
+      const turnstileToken = cleanText(
+        formData.turnstileToken
+      );
       const consent = formData.consent;
 
       const supportedLanguages = [
@@ -197,6 +258,49 @@ export default {
               'The project message is too long.',
           },
           400
+        );
+      }
+
+      if (
+        !turnstileToken ||
+        turnstileToken.length > 2048
+      ) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'Please complete the security verification.',
+          },
+          400
+        );
+      }
+      
+      // Validate the token before the D1 insertion
+      const turnstileResult =
+        await verifyTurnstileToken({
+          token: turnstileToken,
+          secretKey: env.TURNSTILE_SECRET_KEY,
+          remoteIp: request.headers.get(
+            'CF-Connecting-IP'
+          ),
+        });
+
+      if (!turnstileResult.success) {
+        console.error(
+          'Turnstile rejected the submission:',
+          turnstileResult['error-codes']
+        );
+
+        return sendJson(
+          request,
+          {
+            success: false,
+            message: turnstileResult.internalError
+              ? 'Security verification is temporarily unavailable. Please try again.'
+              : 'Security verification failed. Please try again.',
+          },
+          turnstileResult.internalError ? 503 : 400
         );
       }
 
