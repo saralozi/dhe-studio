@@ -40,23 +40,30 @@ const validAiBrief = {
 	is replaced with a fake function.
 */
 const createTestEnv = ({
-	aiRun = vi.fn().mockResolvedValue({
-		response: JSON.stringify(validAiBrief),
-	}),
+  aiRun = vi.fn().mockResolvedValue({
+    response: JSON.stringify(validAiBrief),
+  }),
+
+  rateLimit = vi.fn().mockResolvedValue({
+    success: true,
+  }),
 } = {}) => {
-	return {
-		dhe_studio_inquiries_db:
-			env.dhe_studio_inquiries_db,
+  return {
+    dhe_studio_inquiries_db:
+      env.dhe_studio_inquiries_db,
 
-		TURNSTILE_SECRET_KEY:
-			'test-turnstile-secret',
+    TURNSTILE_SECRET_KEY:
+      'test-turnstile-secret',
 
-		AI: {
-			run: aiRun,
-		},
-	};
+    AI: {
+      run: aiRun,
+    },
+
+    INQUIRY_RATE_LIMITER: {
+      limit: rateLimit,
+    },
+  };
 };
-
 /*
 	Run the Worker directly inside the test environment.
 
@@ -450,7 +457,7 @@ describe('DHÈ Studio inquiry API', () => {
 		);
 	});
 
-	it('rejects an inquiry when Turnstile fails', async () => {
+		it('rejects an inquiry when Turnstile fails', async () => {
 		mockTurnstileResponse({
 			success: false,
 			'error-codes': [
@@ -504,6 +511,69 @@ describe('DHÈ Studio inquiry API', () => {
 					`
 				)
 				.bind('blocked@example.com')
+				.first();
+
+		expect(storedInquiry).toBeNull();
+	});
+
+	it('rejects an inquiry when the rate limit is exceeded', async () => {
+		const rateLimit = vi
+			.fn()
+			.mockResolvedValue({
+				success: false,
+			});
+
+		const aiRun = vi.fn();
+
+		const response = await callWorker({
+			path: '/api/inquiry',
+			method: 'POST',
+
+			testEnv: createTestEnv({
+				rateLimit,
+				aiRun,
+			}),
+
+			body: {
+				name: 'Limited User',
+				email: 'limited@example.com',
+				message:
+					'This request should be stopped.',
+				consent: true,
+				language: 'en',
+				turnstileToken: 'test-token',
+			},
+		});
+
+		const data = await response.json();
+
+		expect(response.status).toBe(429);
+		expect(data.success).toBe(false);
+
+		expect(data.message).toBe(
+			'Too many inquiry attempts. Please wait a minute and try again.'
+		);
+
+		expect(rateLimit).toHaveBeenCalledWith({
+			key: 'contact-inquiry:local-development',
+		});
+
+		/*
+			Turnstile and AI must not run for
+			a rate-limited request.
+		*/
+		expect(aiRun).not.toHaveBeenCalled();
+
+		const storedInquiry =
+			await env.dhe_studio_inquiries_db
+				.prepare(
+					`
+						SELECT id
+						FROM inquiries
+						WHERE email = ?
+					`
+				)
+				.bind('limited@example.com')
 				.first();
 
 		expect(storedInquiry).toBeNull();

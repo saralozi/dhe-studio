@@ -399,7 +399,7 @@ ${message}
     const parsedBrief =
       parseAiResponse(aiResult);
 
-      // Validate the parsed brief against the expected schema and data types
+    // Validate the parsed brief against the expected schema and data types
     if (
       !isValidProjectBrief(parsedBrief)
     ) {
@@ -550,8 +550,33 @@ export default {
       request.method === 'POST' &&
       url.pathname === '/api/inquiry'
     ) {
-      let formData;
+      /*
+        Limit contact-form requests before running
+        Turnstile, Workers AI or database operations.
+      */
 
+      const clientIp =
+        request.headers.get('CF-Connecting-IP') ||
+        'local-development';
+
+      const rateLimitResult =
+        await env.INQUIRY_RATE_LIMITER.limit({
+          key: `contact-inquiry:${clientIp}`,
+        });
+
+      if (!rateLimitResult.success) {
+        return sendJson(
+          request,
+          {
+            success: false,
+            message:
+              'Too many inquiry attempts. Please wait a minute and try again.',
+          },
+          429
+        );
+      }
+
+      let formData;
       try {
         formData =
           await request.json();
@@ -746,7 +771,7 @@ export default {
         console.error(
           'Turnstile rejected the submission:',
           turnstileResult[
-            'error-codes'
+          'error-codes'
           ]
         );
 
