@@ -3,8 +3,7 @@ const allowedOrigins = [
 ];
 
 /* Project brief structure expected from Workers AI */
-// Return an object with the following properties:
-// This schema is sent to Workers AI
+
 const projectBriefSchema = {
   type: 'object',
 
@@ -68,7 +67,6 @@ const projectBriefSchema = {
   additionalProperties: false,
 };
 
-// This array is used by the validation function to check if the AI result has the expected keys
 const projectBriefKeys = [
   'summary',
   'projectType',
@@ -109,7 +107,6 @@ const sendJson = (
 };
 
 /* Text cleaning */
-// AI output cleaning functions to ensure the data is safe and within expected limits
 
 const cleanText = (value) => {
   return typeof value === 'string'
@@ -144,16 +141,6 @@ const cleanAiList = (value) => {
 };
 
 /* Validate the AI result */
-// Check the AI result against the expected schema and ensure it has valid data
-
-// Is an object.
-// Is not an array.
-// Contains every required property.
-// Does not contain unexpected properties.
-// Uses strings for the normal fields.
-// Uses arrays of strings for priorities.
-// Uses arrays of strings for missingInformation.
-// Does not contain empty string values.
 
 const isValidProjectBrief = (brief) => {
   if (
@@ -269,13 +256,6 @@ const normalizeProjectBrief = (brief) => {
 };
 
 /* Safe result used when AI fails */
-// This is used if:
-// - Workers AI is unavailable.
-// - The model request fails.
-// - AI returns invalid JSON.
-// - AI returns the wrong fields.
-// - AI returns incorrect data types.
-// - Another unexpected AI error occurs.
 
 const createFallbackProjectBrief = (
   message
@@ -301,8 +281,7 @@ const createFallbackProjectBrief = (
   };
 };
 
-/* Read the response returned by Workers AI */
-// If it is a string, parse it as JSON. If it is an object, return it as-is. Otherwise, throw an error.
+/* Read the Workers AI response */
 
 const parseAiResponse = (aiResult) => {
   const response = aiResult?.response;
@@ -325,7 +304,6 @@ const parseAiResponse = (aiResult) => {
 };
 
 /* Generate the structured project brief */
-// Main AI processing function. It sends the visitor's message to Workers AI and returns a structured project brief.
 
 const generateProjectBrief = async ({
   env,
@@ -339,13 +317,10 @@ const generateProjectBrief = async ({
       );
     }
 
-    // call the model with the visitor's message and the system prompt
-    // env.AI is the Workers AI binding configuration
-    // It allows the Worker to call Cloudflare's AI service without manually creating a separate HTTP request
     const aiResult = await env.AI.run(
       '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
       {
-        messages: [ // system message defines the model's job and rules (model's highest level of instrucions)
+        messages: [
           {
             role: 'system',
 
@@ -372,13 +347,14 @@ Return only data matching the supplied JSON Schema.
             `.trim(),
           },
 
-          { // user message contains the visitor's inquiry and language
+          {
             role: 'user',
 
             content: `
 Visitor language: ${language}
 
 Project inquiry:
+
 ${message}
             `.trim(),
           },
@@ -391,15 +367,14 @@ ${message}
             projectBriefSchema,
         },
 
-        temperature: 0.1, // low temp makes the model more consistent, less creative, and less likely to hallucinate
-        max_tokens: 700, // limit how much content the model can generate to avoid excessive output and costs
+        temperature: 0.1,
+        max_tokens: 700,
       }
     );
 
     const parsedBrief =
       parseAiResponse(aiResult);
 
-    // Validate the parsed brief against the expected schema and data types
     if (
       !isValidProjectBrief(parsedBrief)
     ) {
@@ -408,7 +383,6 @@ ${message}
       );
     }
 
-    // Normalize the validated brief to ensure all string fields are cleaned and within expected length limits
     return {
       brief:
         normalizeProjectBrief(
@@ -424,7 +398,6 @@ ${message}
       error
     );
 
-    // Return a fallback brief with the visitor's message and a status indicating that the AI processing failed. The error message is cleaned and truncated to 500 characters for logging purposes.
     return {
       brief:
         createFallbackProjectBrief(
@@ -441,6 +414,526 @@ ${message}
       ),
     };
   }
+};
+
+/* Email helpers */
+
+// Escape visitor-provided text before placing it
+// inside an HTML email.
+const escapeHtml = (value) => {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+};
+
+const cleanEmailSubjectText = (value) => {
+  return cleanText(value)
+    .replace(/[\r\n]+/g, ' ')
+    .slice(0, 120);
+};
+
+const createInquiryEmailHtml = ({
+  inquiryId,
+  name,
+  email,
+  phone,
+  message,
+  language,
+  brief,
+}) => {
+  const priorities =
+    brief.priorities.length > 0
+      ? brief.priorities
+          .map(
+            (priority) => `
+              <li style="margin-bottom: 6px;">
+                ${escapeHtml(priority)}
+              </li>
+            `
+          )
+          .join('')
+      : '<li>None identified</li>';
+
+  const missingInformation =
+    brief.missingInformation.length > 0
+      ? brief.missingInformation
+          .map(
+            (item) => `
+              <li style="margin-bottom: 6px;">
+                ${escapeHtml(item)}
+              </li>
+            `
+          )
+          .join('')
+      : '<li>None identified</li>';
+
+  return `
+    <!doctype html>
+
+    <html lang="en">
+      <body
+        style="
+          margin: 0;
+          padding: 0;
+          background-color: #eae8e2;
+          color: #181818;
+          font-family: Arial, Helvetica, sans-serif;
+        "
+      >
+        <div
+          style="
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 42px 24px;
+          "
+        >
+          <div
+            style="
+              padding: 38px;
+              border-top: 4px solid #ef623d;
+              background-color: #ffffff;
+            "
+          >
+            <p
+              style="
+                margin: 0 0 12px;
+                color: #ef623d;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+              "
+            >
+              New project inquiry
+            </p>
+
+            <h1
+              style="
+                margin: 0 0 32px;
+                font-size: 30px;
+                font-weight: 400;
+                line-height: 1.2;
+              "
+            >
+              ${escapeHtml(name)}
+            </h1>
+
+            <h2
+              style="
+                margin: 0 0 14px;
+                font-size: 17px;
+              "
+            >
+              AI project brief
+            </h2>
+
+            <p
+              style="
+                margin: 0 0 28px;
+                color: #4f4e49;
+                font-size: 15px;
+                line-height: 1.7;
+              "
+            >
+              ${escapeHtml(brief.summary)}
+            </p>
+
+            <table
+              role="presentation"
+              style="
+                width: 100%;
+                margin-bottom: 30px;
+                border-collapse: collapse;
+              "
+            >
+              <tr>
+                <td
+                  style="
+                    padding: 10px 0;
+                    color: #77756e;
+                  "
+                >
+                  Project type
+                </td>
+
+                <td
+                  style="
+                    padding: 10px 0;
+                    text-align: right;
+                  "
+                >
+                  ${escapeHtml(
+                    brief.projectType
+                  )}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  style="
+                    padding: 10px 0;
+                    color: #77756e;
+                  "
+                >
+                  Location
+                </td>
+
+                <td
+                  style="
+                    padding: 10px 0;
+                    text-align: right;
+                  "
+                >
+                  ${escapeHtml(
+                    brief.location
+                  )}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  style="
+                    padding: 10px 0;
+                    color: #77756e;
+                  "
+                >
+                  Approximate area
+                </td>
+
+                <td
+                  style="
+                    padding: 10px 0;
+                    text-align: right;
+                  "
+                >
+                  ${escapeHtml(
+                    brief.approximateArea
+                  )}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  style="
+                    padding: 10px 0;
+                    color: #77756e;
+                  "
+                >
+                  Timeline
+                </td>
+
+                <td
+                  style="
+                    padding: 10px 0;
+                    text-align: right;
+                  "
+                >
+                  ${escapeHtml(
+                    brief.timeline
+                  )}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  style="
+                    padding: 10px 0;
+                    color: #77756e;
+                  "
+                >
+                  Budget
+                </td>
+
+                <td
+                  style="
+                    padding: 10px 0;
+                    text-align: right;
+                  "
+                >
+                  ${escapeHtml(
+                    brief.budget
+                  )}
+                </td>
+              </tr>
+            </table>
+
+            <h2
+              style="
+                margin: 0 0 10px;
+                font-size: 17px;
+              "
+            >
+              Main priorities
+            </h2>
+
+            <ul
+              style="
+                margin: 0 0 28px;
+                padding-left: 20px;
+                color: #4f4e49;
+                line-height: 1.6;
+              "
+            >
+              ${priorities}
+            </ul>
+
+            <h2
+              style="
+                margin: 0 0 10px;
+                font-size: 17px;
+              "
+            >
+              Missing information
+            </h2>
+
+            <ul
+              style="
+                margin: 0 0 32px;
+                padding-left: 20px;
+                color: #4f4e49;
+                line-height: 1.6;
+              "
+            >
+              ${missingInformation}
+            </ul>
+
+            <div
+              style="
+                margin-bottom: 30px;
+                padding: 22px;
+                background-color: #f3f1ec;
+              "
+            >
+              <h2
+                style="
+                  margin: 0 0 12px;
+                  font-size: 17px;
+                "
+              >
+                Original message
+              </h2>
+
+              <p
+                style="
+                  margin: 0;
+                  color: #4f4e49;
+                  font-size: 14px;
+                  line-height: 1.7;
+                  white-space: pre-wrap;
+                "
+              >
+                ${escapeHtml(message)}
+              </p>
+            </div>
+
+            <h2
+              style="
+                margin: 0 0 14px;
+                font-size: 17px;
+              "
+            >
+              Contact information
+            </h2>
+
+            <p style="margin: 0 0 8px;">
+              <strong>Email:</strong>
+
+              <a
+                href="mailto:${escapeHtml(email)}"
+                style="color: #ef623d;"
+              >
+                ${escapeHtml(email)}
+              </a>
+            </p>
+
+            <p style="margin: 0 0 8px;">
+              <strong>Phone:</strong>
+
+              ${escapeHtml(
+                phone || 'Not provided'
+              )}
+            </p>
+
+            <p style="margin: 0 0 8px;">
+              <strong>Website language:</strong>
+
+              ${escapeHtml(
+                language.toUpperCase()
+              )}
+            </p>
+
+            <p style="margin: 0;">
+              <strong>Inquiry ID:</strong>
+
+              ${escapeHtml(inquiryId)}
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+};
+
+const createInquiryEmailText = ({
+  inquiryId,
+  name,
+  email,
+  phone,
+  message,
+  language,
+  brief,
+}) => {
+  const priorities =
+    brief.priorities.length > 0
+      ? brief.priorities
+          .map((item) => `- ${item}`)
+          .join('\n')
+      : '- None identified';
+
+  const missingInformation =
+    brief.missingInformation.length > 0
+      ? brief.missingInformation
+          .map((item) => `- ${item}`)
+          .join('\n')
+      : '- None identified';
+
+  return `
+NEW PROJECT INQUIRY
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Language: ${language.toUpperCase()}
+Inquiry ID: ${inquiryId}
+
+AI PROJECT BRIEF
+
+Summary:
+${brief.summary}
+
+Project type: ${brief.projectType}
+Location: ${brief.location}
+Approximate area: ${brief.approximateArea}
+Timeline: ${brief.timeline}
+Budget: ${brief.budget}
+
+Main priorities:
+${priorities}
+
+Missing information:
+${missingInformation}
+
+ORIGINAL MESSAGE
+
+${message}
+  `.trim();
+};
+
+const sendInquiryEmail = async ({
+  env,
+  inquiryId,
+  name,
+  email,
+  phone,
+  message,
+  language,
+  brief,
+}) => {
+  if (!env.RESEND_API_KEY) {
+    throw new Error(
+      'RESEND_API_KEY is not configured.'
+    );
+  }
+
+  if (
+    !env.INQUIRY_FROM_EMAIL ||
+    !env.INQUIRY_TO_EMAIL
+  ) {
+    throw new Error(
+      'Inquiry email addresses are not configured.'
+    );
+  }
+
+  const safeName =
+    cleanEmailSubjectText(name) ||
+    'Website visitor';
+
+  const response = await fetch(
+    'https://api.resend.com/emails',
+    {
+      method: 'POST',
+
+      headers: {
+        Authorization:
+          `Bearer ${env.RESEND_API_KEY}`,
+
+        'Content-Type':
+          'application/json',
+
+        'Idempotency-Key':
+          `dhe-inquiry-${inquiryId}`,
+      },
+
+      body: JSON.stringify({
+        from:
+          `DHÈ Studio Website <${env.INQUIRY_FROM_EMAIL}>`,
+
+        to: [
+          env.INQUIRY_TO_EMAIL,
+        ],
+
+        // Clicking Reply will respond directly
+        // to the visitor.
+        reply_to: email,
+
+        subject:
+          `New project inquiry — ${safeName}`,
+
+        html: createInquiryEmailHtml({
+          inquiryId,
+          name,
+          email,
+          phone,
+          message,
+          language,
+          brief,
+        }),
+
+        text: createInquiryEmailText({
+          inquiryId,
+          name,
+          email,
+          phone,
+          message,
+          language,
+          brief,
+        }),
+      }),
+    }
+  );
+
+  const responseData =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      responseData.message ||
+        `Resend returned HTTP ${response.status}.`
+    );
+  }
+
+  if (!responseData.id) {
+    throw new Error(
+      'Resend did not return an email ID.'
+    );
+  }
+
+  return responseData.id;
 };
 
 /* Verify Turnstile token */
@@ -551,17 +1044,19 @@ export default {
       url.pathname === '/api/inquiry'
     ) {
       /*
-        Limit contact-form requests before running
-        Turnstile, Workers AI or database operations.
+        Stop excessive requests before using
+        Turnstile, Workers AI or D1.
       */
 
       const clientIp =
-        request.headers.get('CF-Connecting-IP') ||
-        'local-development';
+        request.headers.get(
+          'CF-Connecting-IP'
+        ) || 'local-development';
 
       const rateLimitResult =
         await env.INQUIRY_RATE_LIMITER.limit({
-          key: `contact-inquiry:${clientIp}`,
+          key:
+            `contact-inquiry:${clientIp}`,
         });
 
       if (!rateLimitResult.success) {
@@ -569,6 +1064,7 @@ export default {
           request,
           {
             success: false,
+
             message:
               'Too many inquiry attempts. Please wait a minute and try again.',
           },
@@ -577,6 +1073,7 @@ export default {
       }
 
       let formData;
+
       try {
         formData =
           await request.json();
@@ -690,6 +1187,7 @@ export default {
           request,
           {
             success: false,
+
             message:
               'The name is too long.',
           },
@@ -771,7 +1269,7 @@ export default {
         console.error(
           'Turnstile rejected the submission:',
           turnstileResult[
-          'error-codes'
+            'error-codes'
           ]
         );
 
@@ -804,53 +1302,67 @@ export default {
       const processedAt =
         new Date().toISOString();
 
+      let inquiryId;
+
       /*
-        Store both the original inquiry and
-        the structured project brief.
+        Save the inquiry before sending the email.
+
+        This ensures that the original inquiry is
+        preserved even when email delivery fails.
       */
 
       try {
-        await env
-          .dhe_studio_inquiries_db
-          .prepare(
-            `
-              INSERT INTO inquiries (
-                name,
-                email,
-                phone,
-                message,
-                language,
-                consent_given,
-                ai_summary,
-                ai_project_type,
-                email_status,
-                ai_brief_json,
-                ai_status,
-                ai_error,
-                ai_processed_at
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `
-          )
-          .bind(
-            name,
-            email,
-            phone || null,
-            message,
-            language,
-            1,
-            aiProcessing.brief.summary,
-            aiProcessing.brief
-              .projectType,
-            'pending',
-            JSON.stringify(
+        const insertResult =
+          await env
+            .dhe_studio_inquiries_db
+            .prepare(
+              `
+                INSERT INTO inquiries (
+                  name,
+                  email,
+                  phone,
+                  message,
+                  language,
+                  consent_given,
+                  ai_summary,
+                  ai_project_type,
+                  email_status,
+                  ai_brief_json,
+                  ai_status,
+                  ai_error,
+                  ai_processed_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `
+            )
+            .bind(
+              name,
+              email,
+              phone || null,
+              message,
+              language,
+              1,
+              aiProcessing.brief.summary,
               aiProcessing.brief
-            ),
-            aiProcessing.status,
-            aiProcessing.error,
-            processedAt
-          )
-          .run();
+                .projectType,
+              'pending',
+              JSON.stringify(
+                aiProcessing.brief
+              ),
+              aiProcessing.status,
+              aiProcessing.error,
+              processedAt
+            )
+            .run();
+
+        inquiryId =
+          insertResult.meta?.last_row_id;
+
+        if (!inquiryId) {
+          throw new Error(
+            'D1 did not return the new inquiry ID.'
+          );
+        }
       } catch (databaseError) {
         console.error(
           'Failed to store inquiry:',
@@ -869,7 +1381,96 @@ export default {
         );
       }
 
-      /* Success */
+      /* Send the email notification */
+
+      try {
+        const resendEmailId =
+          await sendInquiryEmail({
+            env,
+            inquiryId,
+            name,
+            email,
+            phone,
+            message,
+            language,
+            brief: aiProcessing.brief,
+          });
+
+        const emailSentAt =
+          new Date().toISOString();
+
+        await env
+          .dhe_studio_inquiries_db
+          .prepare(
+            `
+              UPDATE inquiries
+              SET
+                email_status = ?,
+                resend_email_id = ?,
+                email_error = NULL,
+                email_sent_at = ?
+              WHERE id = ?
+            `
+          )
+          .bind(
+            'sent',
+            resendEmailId,
+            emailSentAt,
+            inquiryId
+          )
+          .run();
+      } catch (emailError) {
+        const emailErrorMessage =
+          cleanAiText(
+            emailError instanceof Error
+              ? emailError.message
+              : 'Unknown email delivery error.',
+            1000
+          );
+
+        console.error(
+          'Failed to send inquiry email:',
+          emailError
+        );
+
+        /*
+          The inquiry is already safely stored.
+
+          Try to mark the notification as failed
+          without losing the visitor's submission.
+        */
+
+        try {
+          await env
+            .dhe_studio_inquiries_db
+            .prepare(
+              `
+                UPDATE inquiries
+                SET
+                  email_status = ?,
+                  email_error = ?,
+                  email_sent_at = NULL
+                WHERE id = ?
+              `
+            )
+            .bind(
+              'failed',
+              emailErrorMessage,
+              inquiryId
+            )
+            .run();
+        } catch (statusUpdateError) {
+          console.error(
+            'Failed to update email status:',
+            statusUpdateError
+          );
+        }
+      }
+
+      /*
+        Return success because the inquiry is stored
+        even if the email notification failed.
+      */
 
       return sendJson(request, {
         success: true,
@@ -885,6 +1486,7 @@ export default {
       request,
       {
         success: false,
+
         message:
           'Endpoint not found.',
       },
