@@ -2,6 +2,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+
 import {
   Link,
   useParams,
@@ -10,9 +11,11 @@ import {
 import { sanityClient } from '../../sanity/client';
 import { projectBySlugQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
 import {
   useLanguage,
 } from '../../context/LanguageContext';
+
 import {
   getTranslations,
 } from '../../i18n/translations';
@@ -20,30 +23,63 @@ import {
 import NotFound from '../NotFound/NotFound';
 import './projectdetails.css';
 
+const isVideoItem = (galleryItem) => {
+  return (
+    galleryItem?._type === 'galleryVideo' ||
+    galleryItem?.mimeType?.startsWith('video/')
+  );
+};
+
 const ProjectDetails = () => {
   const { slug } = useParams();
   const { language } = useLanguage();
 
-  const translations = getTranslations(language);
-  const text = translations.projectDetailsPage;
-  const projectsText = translations.projectsPage;
+  const translations =
+    getTranslations(language);
 
-  const [project, setProject] = useState(null);
+  const text =
+    translations.projectDetailsPage;
 
-  const [projectLoading, setProjectLoading] =
-    useState(true);
+  const projectsText =
+    translations.projectsPage;
 
-  const [projectError, setProjectError] =
-    useState('');
+  const [project, setProject] =
+    useState(null);
 
   const [
-    selectedImageIndex,
-    setSelectedImageIndex,
+    projectLoading,
+    setProjectLoading,
+  ] = useState(true);
+
+  const [
+    projectError,
+    setProjectError,
+  ] = useState('');
+
+  const [
+    selectedMediaIndex,
+    setSelectedMediaIndex,
   ] = useState(null);
 
-  const galleryImages =
+  /*
+    Keep valid images and videos only.
+
+    Images use their Sanity image asset.
+    Videos use the direct assetUrl returned by GROQ.
+  */
+  const galleryItems =
     project?.gallery?.filter(
-      (galleryImage) => galleryImage?.asset
+      (galleryItem) => {
+        if (isVideoItem(galleryItem)) {
+          return Boolean(
+            galleryItem.assetUrl
+          );
+        }
+
+        return Boolean(
+          galleryItem?.asset
+        );
+      }
     ) || [];
 
   // Get project from Sanity
@@ -55,7 +91,7 @@ const ProjectDetails = () => {
       try {
         setProjectLoading(true);
         setProjectError('');
-        setSelectedImageIndex(null);
+        setSelectedMediaIndex(null);
 
         const projectFromSanity =
           await sanityClient.fetch(
@@ -87,30 +123,35 @@ const ProjectDetails = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, [slug, language, text.error]);
+  }, [
+    slug,
+    language,
+    text.error,
+  ]);
 
   // Modal keyboard navigation and scroll lock
 
   useEffect(() => {
-    if (selectedImageIndex === null) {
+    if (selectedMediaIndex === null) {
       return;
     }
 
     const previousBodyOverflow =
       document.body.style.overflow;
 
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow =
+      'hidden';
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setSelectedImageIndex(null);
+        setSelectedMediaIndex(null);
       }
 
       if (
         event.key === 'ArrowLeft' &&
-        galleryImages.length > 1
+        galleryItems.length > 1
       ) {
-        setSelectedImageIndex(
+        setSelectedMediaIndex(
           (currentIndex) => {
             if (currentIndex === null) {
               return null;
@@ -119,8 +160,8 @@ const ProjectDetails = () => {
             return (
               (currentIndex -
                 1 +
-                galleryImages.length) %
-              galleryImages.length
+                galleryItems.length) %
+              galleryItems.length
             );
           }
         );
@@ -128,9 +169,9 @@ const ProjectDetails = () => {
 
       if (
         event.key === 'ArrowRight' &&
-        galleryImages.length > 1
+        galleryItems.length > 1
       ) {
-        setSelectedImageIndex(
+        setSelectedMediaIndex(
           (currentIndex) => {
             if (currentIndex === null) {
               return null;
@@ -138,7 +179,7 @@ const ProjectDetails = () => {
 
             return (
               (currentIndex + 1) %
-              galleryImages.length
+              galleryItems.length
             );
           }
         );
@@ -160,42 +201,64 @@ const ProjectDetails = () => {
       );
     };
   }, [
-    selectedImageIndex,
-    galleryImages.length,
+    selectedMediaIndex,
+    galleryItems.length,
   ]);
 
-  const showPreviousImage = () => {
-    setSelectedImageIndex((currentIndex) => {
-      if (currentIndex === null) {
-        return null;
-      }
+  const showPreviousMedia = () => {
+    setSelectedMediaIndex(
+      (currentIndex) => {
+        if (currentIndex === null) {
+          return null;
+        }
 
-      return (
-        (currentIndex -
-          1 +
-          galleryImages.length) %
-        galleryImages.length
-      );
-    });
+        return (
+          (currentIndex -
+            1 +
+            galleryItems.length) %
+          galleryItems.length
+        );
+      }
+    );
   };
 
-  const showNextImage = () => {
-    setSelectedImageIndex((currentIndex) => {
-      if (currentIndex === null) {
-        return null;
-      }
+  const showNextMedia = () => {
+    setSelectedMediaIndex(
+      (currentIndex) => {
+        if (currentIndex === null) {
+          return null;
+        }
 
-      return (
-        (currentIndex + 1) %
-        galleryImages.length
-      );
-    });
+        return (
+          (currentIndex + 1) %
+          galleryItems.length
+        );
+      }
+    );
   };
 
-  const closeModalFromBackdrop = (event) => {
-    if (event.target === event.currentTarget) {
-      setSelectedImageIndex(null);
+  const closeModalFromBackdrop = (
+    event
+  ) => {
+    if (
+      event.target === event.currentTarget
+    ) {
+      setSelectedMediaIndex(null);
     }
+  };
+
+  const getPosterUrl = (
+    galleryItem,
+    width = 1600
+  ) => {
+    if (!galleryItem?.poster?.asset) {
+      return undefined;
+    }
+
+    return urlFor(galleryItem.poster)
+      .width(width)
+      .auto('format')
+      .url();
   };
 
   // Loading state
@@ -240,10 +303,15 @@ const ProjectDetails = () => {
     text.statuses?.[project.status] ||
     project.status;
 
-  const selectedImage =
-    selectedImageIndex !== null
-      ? galleryImages[selectedImageIndex]
+  const selectedMedia =
+    selectedMediaIndex !== null
+      ? galleryItems[
+          selectedMediaIndex
+        ]
       : null;
+
+  const selectedMediaIsVideo =
+    isVideoItem(selectedMedia);
 
   return (
     <main className="project-details">
@@ -252,7 +320,9 @@ const ProjectDetails = () => {
       <section className="project-details-hero">
         {project.coverImage?.asset && (
           <img
-            src={urlFor(project.coverImage)
+            src={urlFor(
+              project.coverImage
+            )
               .width(2200)
               .height(1300)
               .fit('crop')
@@ -337,11 +407,15 @@ const ProjectDetails = () => {
         <div className="project-details-gallery-area">
           <div className="project-details-description">
             {project.shortDescription && (
-              <p>{project.shortDescription}</p>
+              <p>
+                {project.shortDescription}
+              </p>
             )}
 
             {project.fullDescription && (
-              <p>{project.fullDescription}</p>
+              <p>
+                {project.fullDescription}
+              </p>
             )}
           </div>
 
@@ -353,59 +427,118 @@ const ProjectDetails = () => {
 
             <span>
               {String(
-                galleryImages.length
+                galleryItems.length
               ).padStart(2, '0')}
             </span>
           </div>
 
-          {galleryImages.length > 0 ? (
+          {galleryItems.length > 0 ? (
             <div className="project-details-gallery">
-              {galleryImages.map(
-                (galleryImage, index) => (
-                  <figure
-                    className="project-details-gallery-item"
-                    key={galleryImage._key}
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSelectedImageIndex(index)
-                      }
-                      aria-label={`${
-                        text.openImage ||
-                        'Open image'
-                      } ${index + 1}`}
+              {galleryItems.map(
+                (galleryItem, index) => {
+                  const galleryItemIsVideo =
+                    isVideoItem(
+                      galleryItem
+                    );
+
+                  const mediaTitle =
+                    galleryItem.title ||
+                    galleryItem.alt ||
+                    project.title;
+
+                  return (
+                    <figure
+                      className={`project-details-gallery-item ${
+                        galleryItemIsVideo
+                          ? 'is-video'
+                          : 'is-image'
+                      }`}
+                      key={galleryItem._key}
                     >
-                      <img
-                        src={urlFor(galleryImage)
-                          .width(1400)
-                          .auto('format')
-                          .url()}
-                        alt={
-                          galleryImage.alt ||
-                          `${project.title} ${text.galleryImageFallback}`
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedMediaIndex(
+                            index
+                          )
                         }
-                        loading="lazy"
-                      />
+                        aria-label={
+                          galleryItemIsVideo
+                            ? `${
+                                text.openVideo ||
+                                'Open video'
+                              }: ${mediaTitle}`
+                            : `${
+                                text.openImage ||
+                                'Open image'
+                              } ${index + 1}`
+                        }
+                      >
+                        {galleryItemIsVideo ? (
+                          <>
+                            <video
+                              className="project-details-gallery-video"
+                              src={
+                                galleryItem.assetUrl
+                              }
+                              poster={getPosterUrl(
+                                galleryItem,
+                                1400
+                              )}
+                              muted
+                              playsInline
+                              preload="metadata"
+                              aria-label={
+                                galleryItem.title ||
+                                `${project.title} project video`
+                              }
+                            />
 
-                      <span aria-hidden="true">
-                        ↗
-                      </span>
-                    </button>
+                            <span
+                              className="project-details-gallery-play"
+                              aria-hidden="true"
+                            >
+                              ▶
+                            </span>
+                          </>
+                        ) : (
+                          <img
+                            src={urlFor(
+                              galleryItem
+                            )
+                              .width(1400)
+                              .auto('format')
+                              .url()}
+                            alt={
+                              galleryItem.alt ||
+                              `${project.title} ${text.galleryImageFallback}`
+                            }
+                            loading="lazy"
+                          />
+                        )}
 
-                    {galleryImage.caption && (
-                      <figcaption>
-                        {galleryImage.caption}
-                      </figcaption>
-                    )}
-                  </figure>
-                )
+                        <span
+                          className="project-details-gallery-open"
+                          aria-hidden="true"
+                        >
+                          ↗
+                        </span>
+                      </button>
+
+                      {galleryItem.caption && (
+                        <figcaption>
+                          {galleryItem.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  );
+                }
               )}
             </div>
           ) : (
             <p className="project-details-empty-gallery">
               {text.emptyGallery ||
-                'No gallery images have been added yet.'}
+                'No gallery media has been added yet.'}
             </p>
           )}
         </div>
@@ -413,7 +546,7 @@ const ProjectDetails = () => {
 
       {/* Gallery modal */}
 
-      {selectedImage && (
+      {selectedMedia && (
         <div
           className="project-gallery-modal"
           role="dialog"
@@ -422,16 +555,18 @@ const ProjectDetails = () => {
             text.galleryLabel ||
             'Project gallery'
           }
-          onMouseDown={closeModalFromBackdrop}
+          onMouseDown={
+            closeModalFromBackdrop
+          }
         >
           <div className="project-gallery-modal-top">
             <span>
               {String(
-                selectedImageIndex + 1
+                selectedMediaIndex + 1
               ).padStart(2, '0')}
               {' / '}
               {String(
-                galleryImages.length
+                galleryItems.length
               ).padStart(2, '0')}
             </span>
 
@@ -439,7 +574,7 @@ const ProjectDetails = () => {
               type="button"
               className="project-gallery-modal-close"
               onClick={() =>
-                setSelectedImageIndex(null)
+                setSelectedMediaIndex(null)
               }
               aria-label={
                 text.closeGallery ||
@@ -448,52 +583,89 @@ const ProjectDetails = () => {
             >
               {text.close || 'Close'}
 
-              <span aria-hidden="true">×</span>
+              <span aria-hidden="true">
+                ×
+              </span>
             </button>
           </div>
 
           <div className="project-gallery-modal-content">
-            {galleryImages.length > 1 && (
+            {galleryItems.length > 1 && (
               <button
                 type="button"
                 className="project-gallery-modal-arrow previous"
-                onClick={showPreviousImage}
+                onClick={
+                  showPreviousMedia
+                }
                 aria-label={
                   text.previousImage ||
-                  'Previous image'
+                  'Previous gallery item'
                 }
               >
                 ←
               </button>
             )}
 
-            <figure>
-              <img
-                src={urlFor(selectedImage)
-                  .width(2200)
-                  .auto('format')
-                  .url()}
-                alt={
-                  selectedImage.alt ||
-                  `${project.title} ${text.galleryImageFallback}`
-                }
-              />
+            <figure
+              key={selectedMedia._key}
+              className={
+                selectedMediaIsVideo
+                  ? 'is-video'
+                  : 'is-image'
+              }
+            >
+              {selectedMediaIsVideo ? (
+                <video
+                  className="project-gallery-modal-video"
+                  src={
+                    selectedMedia.assetUrl
+                  }
+                  poster={getPosterUrl(
+                    selectedMedia,
+                    2000
+                  )}
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="metadata"
+                  aria-label={
+                    selectedMedia.title ||
+                    `${project.title} project video`
+                  }
+                >
+                  Your browser does not
+                  support video playback.
+                </video>
+              ) : (
+                <img
+                  src={urlFor(
+                    selectedMedia
+                  )
+                    .width(2200)
+                    .auto('format')
+                    .url()}
+                  alt={
+                    selectedMedia.alt ||
+                    `${project.title} ${text.galleryImageFallback}`
+                  }
+                />
+              )}
 
-              {selectedImage.caption && (
+              {selectedMedia.caption && (
                 <figcaption>
-                  {selectedImage.caption}
+                  {selectedMedia.caption}
                 </figcaption>
               )}
             </figure>
 
-            {galleryImages.length > 1 && (
+            {galleryItems.length > 1 && (
               <button
                 type="button"
                 className="project-gallery-modal-arrow next"
-                onClick={showNextImage}
+                onClick={showNextMedia}
                 aria-label={
                   text.nextImage ||
-                  'Next image'
+                  'Next gallery item'
                 }
               >
                 →

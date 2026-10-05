@@ -129,22 +129,48 @@ export const projectBySlugQuery = `
 
     order,
 
-    gallery[] {
-      _key,
-      asset,
-      hotspot,
-      crop,
+gallery[] {
+  _key,
+  _type,
 
-      "alt": coalesce(
-        alt[language == $language][0].value,
-        alt[language == "en"][0].value
-      ),
+  asset,
+  hotspot,
+  crop,
 
-      "caption": coalesce(
-        caption[language == $language][0].value,
-        caption[language == "en"][0].value
-      )
-    }
+  // Direct URL and file information used by videos
+  "assetUrl": asset->url,
+  "mimeType": asset->mimeType,
+
+  // Image alternative text
+  "alt": coalesce(
+    alt[language == $language][0].value,
+    alt[language == "en"][0].value
+  ),
+
+  // Video title
+  "title": coalesce(
+    title[language == $language][0].value,
+    title[language == "en"][0].value
+  ),
+
+  // Shared image or video caption
+  "caption": coalesce(
+    caption[language == $language][0].value,
+    caption[language == "en"][0].value
+  ),
+
+  // Optional video cover image
+  poster {
+    asset,
+    hotspot,
+    crop,
+
+    "alt": coalesce(
+      alt[language == $language][0].value,
+      alt[language == "en"][0].value
+    )
+  }
+}
   }
 `;
 

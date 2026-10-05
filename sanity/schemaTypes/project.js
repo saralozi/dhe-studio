@@ -193,7 +193,11 @@ export const projectType = defineType({
       title: 'Project gallery',
       type: 'array',
 
+      description:
+        'Add project images and videos in the order they should appear.',
+
       of: [
+        // Gallery image
         defineArrayMember({
           name: 'galleryImage',
           title: 'Gallery image',
@@ -225,9 +229,66 @@ export const projectType = defineType({
             }),
           ],
         }),
+
+        // Gallery video
+        defineArrayMember({
+          name: 'galleryVideo',
+          title: 'Gallery video',
+          type: 'file',
+
+          options: {
+            accept:
+              'video/mp4,video/webm,video/quicktime',
+          },
+
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Video title',
+              type: 'internationalizedArrayString',
+
+              description:
+                'A short accessible title describing the video.',
+
+              validation: (Rule) => Rule.required(),
+            }),
+
+            defineField({
+              name: 'caption',
+              title: 'Video caption',
+              type: 'internationalizedArrayString',
+
+              description:
+                'Optional caption displayed below the video.',
+            }),
+
+            defineField({
+              name: 'poster',
+              title: 'Video cover image',
+              type: 'image',
+
+              description:
+                'Optional image displayed before the video starts.',
+
+              options: {
+                hotspot: true,
+              },
+
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Alternative text',
+                  type: 'internationalizedArrayString',
+
+                  description:
+                    'Describe the video cover image in each language.',
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
-
     defineField({
       name: 'featured',
       title: 'Featured on homepage',
