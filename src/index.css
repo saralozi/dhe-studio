@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap');
+@import url(
+  'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap'
+);
 
 * {
   box-sizing: border-box;
@@ -9,14 +11,24 @@ html {
 }
 
 body {
-  margin: 0;
   min-width: 320px;
-  font-family: 'Manrope', Arial, sans-serif;
+  margin: 0;
+
   background-color: #eae8e2;
+
+  font-family: 'Manrope', Arial, sans-serif;
 }
 
-button {
+button,
+input,
+textarea,
+select {
   font: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 /* Shared titles for internal pages */
@@ -34,10 +46,53 @@ button {
   color: #919088;
 }
 
+/* Shared hero layout for internal pages */
+
+main .inner-page-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+
+  min-height: 62vh;
+  padding: 100px 6% 75px;
+}
+
+main .inner-page-hero > .inner-page-label {
+  margin: 0 0 36px;
+}
+
+/* Large screens */
+
+@media (min-width: 1600px) {
+  main .inner-page-hero {
+    padding-left: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
+
+    padding-right: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
+  }
+}
+
+/* Mobile */
+
 @media (max-width: 760px) {
   .page-hero-title {
     font-size: clamp(44px, 12vw, 64px);
     line-height: 1.02;
     letter-spacing: -2.5px;
+  }
+
+  main .inner-page-hero {
+    min-height: auto;
+    padding: 65px 6% 55px;
+  }
+
+  main .inner-page-hero > .inner-page-label {
+    margin-bottom: 27px;
   }
 }

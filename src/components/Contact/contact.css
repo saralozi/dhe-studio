@@ -7,8 +7,6 @@
 /* Page introduction */
 
 .contact-introduction {
-  min-height: calc(100svh - 92px);
-  padding: 110px 6% 55px;
   border-bottom: 1px solid #c9c6bd;
 }
 
@@ -16,8 +14,6 @@
   display: flex;
   align-items: center;
   gap: 11px;
-
-  margin: 0 0 48px;
 
   color: #6f6d66;
   font-size: 12px;
@@ -35,7 +31,7 @@
 
 .contact-introduction-bottom {
   width: min(100%, 700px);
-  margin: 65px 0 0 auto;
+  margin: 48px 0 0 auto;
 }
 
 .contact-introduction-text {
@@ -55,8 +51,8 @@
   justify-content: space-between;
 
   width: 100%;
-  margin-top: 30px;
-  padding: 16px 0 5px;
+  margin-top: 25px;
+  padding: 14px 0 5px;
 
   border-top: 1px solid #aaa79e;
   color: #55534d;
@@ -100,13 +96,14 @@
   grid-template-columns:
     minmax(260px, 0.75fr)
     minmax(500px, 1.25fr);
-  gap: 10%;
+  align-items: start;
+  gap: 7%;
 
-  padding: 110px 6% 130px;
+  padding: 82px 6% 95px;
 }
 
 .contact-form-heading > p {
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 
   color: #ef623d;
   font-size: 12px;
@@ -134,7 +131,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 30px;
-  row-gap: 38px;
+  row-gap: 32px;
 
   scroll-margin-top: 25px;
 }
@@ -145,7 +142,7 @@
 }
 
 .contact-field label {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 
   color: #55534d;
   font-size: 11px;
@@ -162,7 +159,7 @@
 
 .contact-field input {
   width: 100%;
-  padding: 13px 0;
+  padding: 12px 0;
 
   border: 0;
   border-bottom: 1px solid #aaa79e;
@@ -194,7 +191,7 @@
 
 .contact-field textarea {
   width: 100%;
-  min-height: 190px;
+  min-height: 175px;
   padding: 18px;
 
   border: 1px solid #aaa79e;
@@ -231,7 +228,7 @@
 
 .contact-field-help {
   max-width: 650px;
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   padding-left: 13px;
 
   border-left: 2px solid #ef623d;
@@ -292,7 +289,7 @@
   justify-content: space-between;
 
   width: 100%;
-  margin-top: 10px;
+  margin-top: 4px;
   padding: 19px 22px;
 
   border: 1px solid #171714;
@@ -345,7 +342,7 @@
 .contact-form-message {
   grid-column: 1 / -1;
 
-  margin: -12px 0 0;
+  margin: -8px 0 0;
   padding: 15px 18px;
 
   font-size: 14px;
@@ -367,7 +364,6 @@
 /* Large screens */
 
 @media (min-width: 1600px) {
-  .contact-introduction,
   .contact-form-section {
     padding-left: max(
       6%,
@@ -384,21 +380,16 @@
 /* Tablet */
 
 @media (max-width: 1000px) {
-  .contact-introduction {
-    min-height: auto;
-    padding-top: 90px;
-    padding-bottom: 75px;
-  }
-
   .contact-introduction-bottom {
-    margin-top: 55px;
+    margin-top: 42px;
   }
 
   .contact-form-section {
     grid-template-columns: 1fr;
-    gap: 65px;
+    gap: 48px;
 
-    padding-top: 90px;
+    padding-top: 70px;
+    padding-bottom: 80px;
   }
 
   .contact-form-heading h2 {
@@ -413,17 +404,9 @@
 /* Mobile */
 
 @media (max-width: 700px) {
-  .contact-introduction {
-    padding: 75px 6% 55px;
-  }
-
-  .contact-label {
-    margin-bottom: 28px;
-  }
-
   .contact-introduction-bottom {
     width: 100%;
-    margin-top: 45px;
+    margin-top: 36px;
   }
 
   .contact-introduction-text {
@@ -432,12 +415,16 @@
   }
 
   .contact-scroll-link {
-    margin-top: 28px;
+    margin-top: 24px;
   }
 
   .contact-form-section {
-    gap: 50px;
-    padding: 75px 6% 95px;
+    gap: 38px;
+    padding: 58px 6% 70px;
+  }
+
+  .contact-form-heading > p {
+    margin-bottom: 17px;
   }
 
   .contact-form-heading h2 {
@@ -447,7 +434,7 @@
 
   .contact-form {
     grid-template-columns: 1fr;
-    row-gap: 32px;
+    row-gap: 28px;
 
     scroll-margin-top: 18px;
   }
@@ -461,12 +448,12 @@
   }
 
   .contact-field textarea {
-    min-height: 180px;
+    min-height: 165px;
     padding: 15px;
   }
 
   .contact-submit {
-    margin-top: 5px;
+    margin-top: 2px;
   }
 }
 

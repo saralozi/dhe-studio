@@ -242,8 +242,8 @@ const Contact = () => {
     <main className="contact-page">
       {/* Introduction */}
 
-      <section className="contact-introduction">
-        <p className="contact-label">
+      <section className="contact-introduction inner-page-hero">
+        <p className="contact-label inner-page-label">
           <span></span>
           {text.label}
         </p>

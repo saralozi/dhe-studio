@@ -3,7 +3,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
 
 import {
   useLanguage,
@@ -14,6 +13,10 @@ import {
 import { sanityClient } from '../../sanity/client';
 import { projectsQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
+import {
+  LocalizedLink,
+} from '../LocalizedLink/LocalizedLink';
 
 import './projects.css';
 
@@ -134,8 +137,8 @@ const Projects = () => {
     <main className="projects-page">
       {/* Page introduction */}
 
-      <section className="projects-hero">
-        <p className="projects-label">
+      <section className="projects-hero inner-page-hero">
+        <p className="projects-label inner-page-label">
           <span></span>
           {text.label}
         </p>
@@ -249,7 +252,7 @@ const Projects = () => {
                   className="projects-card"
                   key={project._id}
                 >
-                  <Link
+                  <LocalizedLink
                     to={`/projects/${project.slug}`}
                     aria-label={`${text.viewProject} ${project.title}`}
                   >
@@ -289,7 +292,7 @@ const Projects = () => {
                         ↗
                       </span>
                     </div>
-                  </Link>
+                  </LocalizedLink>
                 </article>
               );
             })}

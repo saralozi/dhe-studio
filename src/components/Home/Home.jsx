@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import {
   useLanguage,
@@ -13,6 +12,11 @@ import {
   servicesQuery,
 } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
+import {
+  LocalizedLink,
+} from '../LocalizedLink/LocalizedLink';
+
 
 import './home.css';
 
@@ -306,13 +310,13 @@ const Home = () => {
           <div className="home-about-bottom">
             <p>{text.aboutDescription}</p>
 
-            <Link
+            <LocalizedLink
               to="/about"
               className="home-page-link"
             >
               {text.aboutLink}
               <span>↗</span>
-            </Link>
+            </LocalizedLink>
           </div>
         </div>
       </section>
@@ -337,13 +341,13 @@ const Home = () => {
             </h2>
           </div>
 
-          <Link
+          <LocalizedLink
             to="/services"
             className="home-page-link"
           >
             {text.servicesLink}
             <span>↗</span>
-          </Link>
+          </LocalizedLink>
         </div>
 
         <div className="home-service-grid">
@@ -368,7 +372,7 @@ const Home = () => {
               >
                 {/* Clickable image */}
 
-                <Link
+                <LocalizedLink
                   to="/services"
                   className="home-service-image-link"
                   aria-label={`${text.viewService} ${service.title}`}
@@ -396,16 +400,16 @@ const Home = () => {
                       ).padStart(2, '0')}
                     </span>
                   </div>
-                </Link>
+                </LocalizedLink>
 
                 {/* Clickable title */}
 
-                <Link
+                <LocalizedLink
                   to="/services"
                   className="home-service-title-link"
                 >
                   <h3>{service.title}</h3>
-                </Link>
+                </LocalizedLink>
 
                 {/* Non-clickable description */}
 
@@ -434,13 +438,13 @@ const Home = () => {
             </h2>
           </div>
 
-          <Link
+          <LocalizedLink
             to="/projects"
             className="home-page-link"
           >
             {text.projectsLink}
             <span>↗</span>
-          </Link>
+          </LocalizedLink>
         </div>
 
         {projectsLoading && (
@@ -488,7 +492,7 @@ const Home = () => {
                     className="home-project-card"
                     key={project._id}
                   >
-                    <Link
+                    <LocalizedLink
                       to={`/projects/${project.slug}`}
                       aria-label={`${text.viewProject} ${project.title}`}
                     >
@@ -511,7 +515,7 @@ const Home = () => {
                       </div>
 
                       <h3>{project.title}</h3>
-                    </Link>
+                    </LocalizedLink>
                   </article>
                 ))}
               </div>

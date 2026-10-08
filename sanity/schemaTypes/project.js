@@ -189,6 +189,19 @@ export const projectType = defineType({
     }),
 
     defineField({
+      name: 'heroVideo',
+      title: 'Project details hero video',
+      type: 'file',
+
+      description:
+        'Optional background video shown only in the project details hero. Use a short horizontal MP4 video without audio.',
+
+      options: {
+        accept: 'video/mp4,video/webm',
+      },
+    }),
+
+    defineField({
       name: 'gallery',
       title: 'Project gallery',
       type: 'array',

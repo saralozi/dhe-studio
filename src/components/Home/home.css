@@ -156,7 +156,7 @@
 /* Shared homepage section styles */
 
 .home-section {
-  padding: 105px 6%;
+  padding: 78px 6%;
 }
 
 .home-section-label {
@@ -222,8 +222,8 @@
   display: grid;
   grid-template-columns: 28% 72%;
 
-  padding-top: 110px;
-  padding-bottom: 110px;
+  padding-top: 82px;
+  padding-bottom: 82px;
 
   background-color: #eae8e2;
 }
@@ -252,9 +252,9 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 50px;
+  gap: 45px;
 
-  margin-top: 32px;
+  margin-top: 28px;
 }
 
 .home-about-bottom > p {
@@ -263,7 +263,7 @@
 
   color: #66655f;
   font-size: 15px;
-  line-height: 1.85;
+  line-height: 1.8;
 }
 
 /* Shared section heading */
@@ -274,11 +274,11 @@
   justify-content: space-between;
   gap: 35px;
 
-  margin-bottom: 47px;
+  margin-bottom: 38px;
 }
 
 .home-section-heading .home-section-label {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .home-section-heading h2 {
@@ -331,7 +331,7 @@
   position: relative;
 
   aspect-ratio: 4 / 4.5;
-  margin-bottom: 24px;
+  margin-bottom: 21px;
   overflow: hidden;
 
   background-color: #cccccc;
@@ -348,7 +348,8 @@
   transition: transform 0.7s ease;
 }
 
-.home-service-image-link:hover .home-service-image img {
+.home-service-image-link:hover
+  .home-service-image img {
   transform: scale(1.04);
 }
 
@@ -372,7 +373,7 @@
 /* Service title */
 
 .home-service-card h3 {
-  margin: 0 0 13px;
+  margin: 0 0 11px;
 
   color: #181818;
 
@@ -395,7 +396,7 @@
 
   color: #696862;
   font-size: 14px;
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 /* Projects section */
@@ -480,7 +481,7 @@
 /* Project title */
 
 .home-project-card h3 {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
 
   color: #181818;
 
@@ -508,8 +509,8 @@
 
   width: 40px;
   height: 60px;
-
   padding: 0;
+
   border: 0;
 
   background: transparent;
@@ -567,7 +568,7 @@
   grid-column: 1 / -1;
 
   margin: 0;
-  padding: 40px 0;
+  padding: 35px 0;
 
   color: #1a1a18;
   font-size: 16px;
@@ -576,7 +577,7 @@
 .home-project-message {
   width: 100%;
   margin: 0;
-  padding: 40px 0;
+  padding: 35px 0;
 
   color: #1a1a18;
   font-size: 16px;
@@ -639,8 +640,15 @@
 
 @media (min-width: 1600px) {
   .home-section {
-    padding-left: max(6%, calc((100vw - 1500px) / 2));
-    padding-right: max(6%, calc((100vw - 1500px) / 2));
+    padding-left: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
+
+    padding-right: max(
+      6%,
+      calc((100vw - 1500px) / 2)
+    );
   }
 }
 
@@ -659,7 +667,7 @@
   .home-about-bottom {
     align-items: flex-start;
     flex-direction: column;
-    gap: 25px;
+    gap: 22px;
   }
 
   .home-service-grid {
@@ -738,15 +746,18 @@
   }
 
   .home-section {
-    padding: 68px 6%;
+    padding: 55px 6%;
   }
 
   .home-about {
     display: block;
+
+    padding-top: 58px;
+    padding-bottom: 58px;
   }
 
   .home-about > .home-section-label {
-    margin-bottom: 27px;
+    margin-bottom: 25px;
     padding: 0;
   }
 
@@ -761,33 +772,33 @@
   }
 
   .home-about-bottom {
-    gap: 28px;
-    margin-top: 25px;
+    gap: 23px;
+    margin-top: 23px;
   }
 
   .home-section-heading {
     display: block;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .home-section-heading .home-section-label {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .home-section-heading > .home-page-link {
-    margin-top: 25px;
+    margin-top: 22px;
   }
 
   /* Mobile services */
 
   .home-service-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 33px 16px;
+    gap: 29px 16px;
   }
 
   .home-service-image {
     aspect-ratio: 3 / 4;
-    margin-bottom: 17px;
+    margin-bottom: 15px;
   }
 
   .home-service-image > span {
@@ -850,11 +861,7 @@
     right: 0;
   }
 
-  .home-project-control-left:hover:not(:disabled) {
-    color: #ef623d;
-    transform: translateY(-50%);
-  }
-
+  .home-project-control-left:hover:not(:disabled),
   .home-project-control-right:hover:not(:disabled) {
     color: #ef623d;
     transform: translateY(-50%);
@@ -869,8 +876,10 @@
 /* Reduced motion accessibility */
 
 @media (prefers-reduced-motion: reduce) {
-  .home-hero.animate-residence .home-hero-outside,
-  .home-hero.animate-residence .home-hero-inside {
+  .home-hero.animate-residence
+    .home-hero-outside,
+  .home-hero.animate-residence
+    .home-hero-inside {
     animation: none;
   }
 
@@ -886,8 +895,10 @@
     transition: none;
   }
 
-  .home-service-image-link:hover .home-service-image img,
-  .home-project-card:hover .home-project-image img {
+  .home-service-image-link:hover
+    .home-service-image img,
+  .home-project-card:hover
+    .home-project-image img {
     transform: none;
   }
 

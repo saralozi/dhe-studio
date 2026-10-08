@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
 
 import {
   useLanguage,
@@ -9,6 +8,12 @@ import {
 } from '../../i18n/translations';
 
 import './navbar.css';
+
+import {
+  LocalizedLink,
+  LocalizedNavLink,
+} from '../LocalizedLink/LocalizedLink';
+
 
 const languageOptions = [
   {
@@ -54,7 +59,7 @@ const Navbar = () => {
 
   return (
     <header className="navbar">
-      <Link
+      <LocalizedLink
         to="/"
         className="navbar-brand"
         aria-label="DHÈ Studio home"
@@ -71,7 +76,7 @@ const Navbar = () => {
           DHÈ STUDIO
           <small>Designing Human Experiences</small>
         </span>
-      </Link>
+      </LocalizedLink>
 
       <button
         type="button"
@@ -134,47 +139,47 @@ const Navbar = () => {
           className="navbar-navigation"
           aria-label={text.mainNavigation}
         >
-          <NavLink
+          <LocalizedNavLink
             to="/"
             end
             className={navLinkClass}
             onClick={closeMenu}
           >
             {text.home}
-          </NavLink>
+          </LocalizedNavLink>
 
-          <NavLink
+          <LocalizedNavLink
             to="/about"
             className={navLinkClass}
             onClick={closeMenu}
           >
             {text.about}
-          </NavLink>
+          </LocalizedNavLink>
 
-          <NavLink
+          <LocalizedNavLink
             to="/services"
             className={navLinkClass}
             onClick={closeMenu}
           >
             {text.services}
-          </NavLink>
+          </LocalizedNavLink>
 
-          <NavLink
+          <LocalizedNavLink
             to="/projects"
             className={navLinkClass}
             onClick={closeMenu}
           >
             {text.projects}
-          </NavLink>
+          </LocalizedNavLink>
 
-          <NavLink
+          <LocalizedNavLink
             to="/contact"
             className={contactLinkClass}
             onClick={closeMenu}
           >
             {text.contact}
             <span>↗</span>
-          </NavLink>
+          </LocalizedNavLink>
         </nav>
       </div>
     </header>

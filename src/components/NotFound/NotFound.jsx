@@ -1,11 +1,13 @@
-import { Link } from 'react-router-dom';
-
 import {
   useLanguage,
 } from '../../context/LanguageContext';
 import {
   getTranslations,
 } from '../../i18n/translations';
+
+import {
+  LocalizedLink,
+} from '../LocalizedLink/LocalizedLink';
 
 import './NotFound.css';
 
@@ -33,10 +35,10 @@ const NotFound = () => {
           {text.description}
         </p>
 
-        <Link to="/" className="not-found-link">
+        <LocalizedLink to="/" className="not-found-link">
           {text.homeLink}
           <span>↗</span>
-        </Link>
+        </LocalizedLink>
       </div>
 
       <span className="not-found-number">

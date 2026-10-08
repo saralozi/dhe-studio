@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import {
   useLanguage,
@@ -10,6 +9,11 @@ import {
 import { sanityClient } from '../../sanity/client';
 import { aboutQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
+
+import {
+  LocalizedLink,
+} from '../LocalizedLink/LocalizedLink';
+
 
 import './about.css';
 
@@ -93,8 +97,8 @@ const About = () => {
     <main className="about-page">
       {/* Page introduction */}
 
-      <section className="about-hero">
-        <p className="about-label">
+      <section className="about-hero inner-page-hero">
+        <p className="about-label inner-page-label">
           <span></span>
           {about.heroLabel}
         </p>
@@ -150,10 +154,10 @@ const About = () => {
             )
           )}
 
-          <Link to="/projects" className="about-link">
+          <LocalizedLink to="/projects" className="about-link">
             {about.projectsLinkLabel}
             <span>↗</span>
-          </Link>
+          </LocalizedLink>
         </div>
       </section>
 

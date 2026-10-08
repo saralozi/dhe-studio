@@ -1,51 +1,46 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
-
-const supportedLanguages = ['en', 'sq', 'tr'];
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  getLanguageFromPath,
+  localizePath,
+  stripLanguage,
+  supportedLanguages,
+} from '../i18n/config';
 
 const LanguageContext = createContext(null);
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguageState] = useState(() => {
-    const savedLanguage =
-      localStorage.getItem('dhe-language');
+  const { pathname, search, hash } = useLocation();
+  const navigate = useNavigate();
 
-    if (
-      savedLanguage &&
-      supportedLanguages.includes(savedLanguage)
-    ) {
-      return savedLanguage;
-    }
+  const language = getLanguageFromPath(pathname);
 
-    return 'en';
-  });
+  const setLanguage = useCallback(
+    (newLanguage) => {
+      if (!supportedLanguages.includes(newLanguage)) return;
 
-  const setLanguage = (newLanguage) => {
-    if (!supportedLanguages.includes(newLanguage)) {
-      return;
-    }
-
-    setLanguageState(newLanguage);
-  };
+      navigate(
+        localizePath(stripLanguage(pathname), newLanguage) +
+          search +
+          hash
+      );
+    },
+    [pathname, search, hash, navigate]
+  );
 
   useEffect(() => {
-    localStorage.setItem('dhe-language', language);
-
     document.documentElement.lang = language;
   }, [language]);
 
   const contextValue = useMemo(
-    () => ({
-      language,
-      setLanguage,
-      supportedLanguages,
-    }),
-    [language]
+    () => ({ language, setLanguage, supportedLanguages }),
+    [language, setLanguage]
   );
 
   return (

@@ -106,8 +106,8 @@ const Services = () => {
     <main className="services-page">
       {/* Page introduction */}
 
-      <section className="services-hero">
-        <p className="services-label">
+      <section className="services-hero inner-page-hero">
+        <p className="services-label inner-page-label">
           <span></span>
           {text.label}
         </p>

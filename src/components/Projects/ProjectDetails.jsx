@@ -296,7 +296,7 @@ const ProjectDetails = () => {
 
   const translatedCategory =
     projectsText.categories?.[
-      project.category
+    project.category
     ] || project.category;
 
   const translatedStatus =
@@ -306,8 +306,8 @@ const ProjectDetails = () => {
   const selectedMedia =
     selectedMediaIndex !== null
       ? galleryItems[
-          selectedMediaIndex
-        ]
+      selectedMediaIndex
+      ]
       : null;
 
   const selectedMediaIsVideo =
@@ -320,9 +320,8 @@ const ProjectDetails = () => {
       <section className="project-details-hero">
         {project.coverImage?.asset && (
           <img
-            src={urlFor(
-              project.coverImage
-            )
+            className="project-details-hero-image"
+            src={urlFor(project.coverImage)
               .width(2200)
               .height(1300)
               .fit('crop')
@@ -335,20 +334,45 @@ const ProjectDetails = () => {
           />
         )}
 
+        {project.heroVideoUrl && (
+          <video
+            className="project-details-hero-video"
+            src={project.heroVideoUrl}
+            poster={
+              project.coverImage?.asset
+                ? urlFor(project.coverImage)
+                  .width(2200)
+                  .height(1300)
+                  .fit('crop')
+                  .auto('format')
+                  .url()
+                : undefined
+            }
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          />
+        )}
+
         <div className="project-details-overlay"></div>
 
         <div className="project-details-title">
           <p>
             {translatedCategory}
             {' · '}
-            {String(
-              project.order || 1
-            ).padStart(2, '0')}
+            {String(project.order || 1).padStart(
+              2,
+              '0'
+            )}
           </p>
 
           <h1>{project.title}</h1>
         </div>
       </section>
+
 
       {/* Information and gallery */}
 
@@ -448,11 +472,10 @@ const ProjectDetails = () => {
 
                   return (
                     <figure
-                      className={`project-details-gallery-item ${
-                        galleryItemIsVideo
+                      className={`project-details-gallery-item ${galleryItemIsVideo
                           ? 'is-video'
                           : 'is-image'
-                      }`}
+                        }`}
                       key={galleryItem._key}
                     >
                       <button
@@ -464,14 +487,12 @@ const ProjectDetails = () => {
                         }
                         aria-label={
                           galleryItemIsVideo
-                            ? `${
-                                text.openVideo ||
-                                'Open video'
-                              }: ${mediaTitle}`
-                            : `${
-                                text.openImage ||
-                                'Open image'
-                              } ${index + 1}`
+                            ? `${text.openVideo ||
+                            'Open video'
+                            }: ${mediaTitle}`
+                            : `${text.openImage ||
+                            'Open image'
+                            } ${index + 1}`
                         }
                       >
                         {galleryItemIsVideo ? (

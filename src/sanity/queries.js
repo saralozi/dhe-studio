@@ -127,6 +127,9 @@ export const projectBySlugQuery = `
       coverImage.alt[language == "en"][0].value
     ),
 
+    "heroVideoUrl": heroVideo.asset->url,
+    "heroVideoMimeType": heroVideo.asset->mimeType,
+
     order,
 
 gallery[] {

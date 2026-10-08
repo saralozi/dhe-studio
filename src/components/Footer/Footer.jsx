@@ -7,6 +7,11 @@ import {
   getTranslations,
 } from '../../i18n/translations';
 
+import {
+  LocalizedLink,
+} from '../LocalizedLink/LocalizedLink';
+
+
 import './footer.css';
 
 const Footer = () => {
@@ -118,7 +123,7 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <Link
+        <LocalizedLink
           to="/"
           className="footer-brand"
           aria-label={text.homeAriaLabel}
@@ -136,7 +141,7 @@ const Footer = () => {
               Designing Human Experiences
             </small>
           </span>
-        </Link>
+        </LocalizedLink>
 
         <span className="footer-copyright">
           © {currentYear} DHÈ Studio
