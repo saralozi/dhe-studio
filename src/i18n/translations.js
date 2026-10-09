@@ -207,7 +207,7 @@ export const translations = {
 
     seo: {
       home: {
-        title: 'DHÈ Studio',
+        title: 'DHÈ Studio | Architecture & Interior Design',
         description:
           'DHÈ Studio is an architecture and interior design studio creating thoughtful spaces shaped around people, context and experience.',
       },
@@ -451,7 +451,7 @@ export const translations = {
 
     seo: {
       home: {
-        title: 'DHÈ Studio',
+        title: 'DHÈ Studio | Arkitekturë dhe Dizajn i Brendshëm',
         description:
           'DHÈ Studio është një studio arkitekture dhe dizajni të brendshëm që krijon hapësira të menduara rreth njerëzve, kontekstit dhe përvojës.',
       },
@@ -693,7 +693,7 @@ export const translations = {
 
     seo: {
       home: {
-        title: 'DHÈ Studio',
+        title: 'DHÈ Studio | Mimari ve İç Mekân Tasarımı',
         description:
           'DHÈ Studio; insanlar, bağlam ve deneyim etrafında şekillenen özenli mekânlar tasarlayan bir mimarlık ve iç mekân tasarım stüdyosudur.',
       },
