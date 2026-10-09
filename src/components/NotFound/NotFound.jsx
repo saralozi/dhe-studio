@@ -8,9 +8,7 @@ import {
 import {
   LocalizedLink,
 } from '../LocalizedLink/LocalizedLink';
-
-import './NotFound.css';
-
+import SEO from '../SEO/SEO';
 const NotFound = () => {
   const { language } = useLanguage();
 
@@ -19,6 +17,8 @@ const NotFound = () => {
 
   return (
     <main className="not-found">
+
+      <SEO title={`${text.titleFirstLine} ${text.titleSecondLine}`} description={text.description} noindex />
       <div className="not-found-content">
         <p className="not-found-label">
           <span></span>

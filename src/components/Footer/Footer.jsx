@@ -1,24 +1,14 @@
-import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslations } from '../../i18n/translations';
 
-import {
-  useLanguage,
-} from '../../context/LanguageContext';
-import {
-  getTranslations,
-} from '../../i18n/translations';
-
-import {
-  LocalizedLink,
-} from '../LocalizedLink/LocalizedLink';
-
+import { LocalizedLink } from '../LocalizedLink/LocalizedLink';
 
 import './footer.css';
 
 const Footer = () => {
   const { language } = useLanguage();
 
-  const text =
-    getTranslations(language).footer;
+  const text = getTranslations(language).footer;
 
   const currentYear = new Date().getFullYear();
 
@@ -43,18 +33,13 @@ const Footer = () => {
             <br />
 
             {text.headingBeforeEmphasis && (
-              <>
-                {text.headingBeforeEmphasis}{' '}
-              </>
+              <>{text.headingBeforeEmphasis} </>
             )}
 
             <em>{text.headingEmphasis}</em>
 
             {text.headingAfterEmphasis && (
-              <>
-                {' '}
-                {text.headingAfterEmphasis}
-              </>
+              <> {text.headingAfterEmphasis}</>
             )}
           </h2>
         </div>
@@ -67,9 +52,7 @@ const Footer = () => {
               <dt>{text.email}</dt>
 
               <dd>
-                <a href={`mailto:${email}`}>
-                  {email}
-                </a>
+                <a href={`mailto:${email}`}>{email}</a>
               </dd>
             </div>
 
@@ -84,14 +67,9 @@ const Footer = () => {
                   href={instagramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={
-                    text.instagramAriaLabel
-                  }
+                  aria-label={text.instagramAriaLabel}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <rect
                       x="3"
                       y="3"
@@ -100,11 +78,7 @@ const Footer = () => {
                       rx="5"
                     />
 
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="4"
-                    />
+                    <circle cx="12" cy="12" r="4" />
 
                     <circle
                       cx="17.5"
@@ -137,14 +111,19 @@ const Footer = () => {
 
           <span className="footer-brand-name">
             DHÈ STUDIO
-            <small>
-              Designing Human Experiences
-            </small>
+            <small>Designing Human Experiences</small>
           </span>
         </LocalizedLink>
 
         <span className="footer-copyright">
           © {currentYear} DHÈ Studio
+
+          <LocalizedLink
+            to="/privacy"
+            className="footer-privacy"
+          >
+            {text.privacyLink}
+          </LocalizedLink>
         </span>
 
         <button

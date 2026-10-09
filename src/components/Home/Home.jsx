@@ -17,6 +17,7 @@ import {
   LocalizedLink,
 } from '../LocalizedLink/LocalizedLink';
 
+import SEO from '../SEO/SEO';
 
 import './home.css';
 
@@ -24,6 +25,7 @@ const Home = () => {
   const { language } = useLanguage();
 
   const translations = getTranslations(language);
+  console.log(Object.keys(translations));
   const text = translations.homePage;
 
   // Hero animation
@@ -231,6 +233,10 @@ const Home = () => {
     <main className="home">
       {/* Hero section */}
 
+      <SEO
+        title={translations.seo.home.title}
+        description={translations.seo.home.description}
+      />
       <section
         className="home-immersive"
         aria-label={text.heroAriaLabel}

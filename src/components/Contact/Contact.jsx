@@ -10,7 +10,7 @@ import {
 import {
   getTranslations,
 } from '../../i18n/translations';
-
+import SEO from '../SEO/SEO';
 import './contact.css';
 
 const initialFormData = {
@@ -27,9 +27,8 @@ const turnstileScriptUrl =
 const Contact = () => {
   const { language } = useLanguage();
 
-  const text =
-    getTranslations(language).contactPage;
-
+  const translations = getTranslations(language);
+  const text = translations.contactPage;
   const turnstileContainerRef = useRef(null);
   const turnstileWidgetIdRef = useRef(null);
 
@@ -240,7 +239,10 @@ const Contact = () => {
 
   return (
     <main className="contact-page">
-      {/* Introduction */}
+<SEO
+        title={translations.seo.contact.title}
+        description={translations.seo.contact.description}
+      />      {/* Introduction */}
 
       <section className="contact-introduction inner-page-hero">
         <p className="contact-label inner-page-label">

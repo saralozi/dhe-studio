@@ -13,15 +13,16 @@ import { urlFor } from '../../sanity/image';
 import {
   LocalizedLink,
 } from '../LocalizedLink/LocalizedLink';
-
+import SEO from '../SEO/SEO';
 
 import './about.css';
 
 const About = () => {
   const { language } = useLanguage();
 
-  const text =
-    getTranslations(language).aboutPage;
+  const translations = getTranslations(language);
+  console.log(Object.keys(translations));
+  const text = translations.aboutPage;
 
   const [about, setAbout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,6 +96,12 @@ const About = () => {
 
   return (
     <main className="about-page">
+
+      <SEO
+        title={translations.seo.about.title}
+        description={translations.seo.about.description}
+      />      
+      
       {/* Page introduction */}
 
       <section className="about-hero inner-page-hero">

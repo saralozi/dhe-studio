@@ -226,6 +226,12 @@
   color: #ffffff;
 }
 
+.footer-privacy {
+  margin-left: 16px;
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Tablet */
 
 @media (max-width: 900px) {

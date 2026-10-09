@@ -10,6 +10,7 @@ import ProjectDetails from './components/Projects/ProjectDetails';
 import NotFound from './components/NotFound/NotFound';
 import Contact from './components/Contact/Contact';
 import ScrollToTop from './components/ScrollOnTop/ScrollOnTop';
+import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy';
 
 import { prefixedLanguages } from './i18n/config';
 
@@ -21,6 +22,8 @@ const pages = [
   { path: 'projects', element: <Projects /> },
   { path: 'projects/:slug', element: <ProjectDetails /> },
   { path: 'contact', element: <Contact /> },
+  { path: 'privacy', element: <PrivacyPolicy /> },
+
 ];
 
 const routes = [

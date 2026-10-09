@@ -11,6 +11,10 @@ export const translations = {
       menu: 'Menu',
       mainNavigation: 'Main navigation',
       languageSelector: 'Select language',
+
+      // Not used yet. Wire these into Navbar.jsx after launch.
+      homeAriaLabel: 'DHÈ Studio home',
+      logoAlt: 'DHÈ Studio logo',
     },
 
     servicesPage: {
@@ -68,6 +72,12 @@ export const translations = {
       nextImage: 'Next image',
       emptyGallery: 'No gallery images have been added yet.',
 
+      // Not used yet. Wire these into ProjectDetails.jsx after launch.
+      openVideo: 'Open video',
+      videoFallback: 'project video',
+      videoNotSupported:
+        'Your browser does not support video playback.',
+
       statuses: {
         Concept: 'Concept',
         'In progress': 'In progress',
@@ -84,9 +94,11 @@ export const translations = {
     homePage: {
       heroEyebrow: 'DESIGNING HUMAN EXPERIENCES',
       heroTitleFirstLine: 'Spaces for life.',
-      heroTitleSecondLine: 'Designed around you.',
+      heroTitleSecondLine: 'Designed around',
+      heroTitleEmphasis: 'you.',
       heroDescription:
         'A dialogue between people, place, and possibility.',
+      heroAriaLabel: 'Explore contemporary architecture',
       scrollToDiscover: 'SCROLL TO DISCOVER',
       heroNote: 'A DIFFERENT PERSPECTIVE ON SPACE.',
 
@@ -109,6 +121,7 @@ export const translations = {
       servicesLoading: 'Loading services...',
       servicesError: 'The services could not be loaded.',
       serviceImageFallback: 'service',
+      viewService: 'View',
 
       projectsLabel: '03 / SELECTED SPACES',
       projectsTitleFirstLine: 'A few ways',
@@ -125,11 +138,6 @@ export const translations = {
         'SPACES TO EXPERIENCE. ROOM TO IMAGINE.',
       previousProject: 'Previous project',
       nextProject: 'Next project',
-
-      heroAriaLabel: 'Explore contemporary architecture',
-      heroTitleSecondLine: 'Designed around',
-      heroTitleEmphasis: 'you.',
-      viewService: 'View',
     },
 
     contactPage: {
@@ -138,21 +146,24 @@ export const translations = {
       titleSecondLine: 'your idea.',
       introduction:
         'Share what you have in mind. You do not need to have everything figured out—we will begin with a conversation.',
-      scrollLink: 'START HERE',
+      scrollLink: 'LET’S TALK',
 
       formLabel: 'PROJECT INQUIRY',
       formHeading:
         'A few details to help us understand your project.',
+      formHeadingFirst:
+        'A few details to help us understand',
+      formHeadingEmphasis: 'your project.',
 
       name: 'Name',
       email: 'Email',
       phone: 'Phone',
       message: 'Tell us about your project',
       messagePlaceholder:
-        'Describe your project, idea, or what you would like to create.',
+        'Tell us about the space, location, approximate area, timeline, or anything else you would like us to know.',
 
       help:
-        'You can mention the project type, location, approximate area, needs, preferred style, timeline, or budget.',
+        'You do not need to include your contact details here. You can mention the project type, location, approximate area, needs, preferred style, timeline, or budget.',
 
       consent:
         'I agree that DHÈ Studio may use these details to respond to my inquiry.',
@@ -164,15 +175,6 @@ export const translations = {
 
       securityRequired:
         'Please complete the security verification.',
-
-      scrollLink: 'LET’S TALK',
-      formHeadingFirst:
-        'A few details to help us understand',
-      formHeadingEmphasis: 'your project.',
-      messagePlaceholder:
-        'Tell us about the space, location, approximate area, timeline, or anything else you would like us to know.',
-      help:
-        'You do not need to include your contact details here. You can mention the project type, location, approximate area, needs, preferred style, timeline, or budget.',
     },
 
     footer: {
@@ -184,11 +186,16 @@ export const translations = {
       email: 'EMAIL',
       socials: 'SOCIALS',
       backToTop: 'Back to top',
+      privacyLink: 'Privacy policy',
 
       homeAriaLabel: 'DHÈ Studio home',
       instagramAriaLabel:
         'Visit DHÈ Studio on Instagram',
+
+      // Not used yet. Wire this into Footer.jsx after launch.
+      logoAlt: 'DHÈ Studio logo',
     },
+
     notFoundPage: {
       label: '404 / PAGE NOT FOUND',
       titleFirstLine: 'This space',
@@ -196,6 +203,39 @@ export const translations = {
       description:
         'The page you are looking for may have been moved, removed, or never existed.',
       homeLink: 'Return home',
+    },
+
+    seo: {
+      home: {
+        title: 'DHÈ Studio',
+        description:
+          'DHÈ Studio is an architecture and interior design studio creating thoughtful spaces shaped around people, context and experience.',
+      },
+      about: {
+        title: 'About DHÈ Studio',
+        description:
+          'Learn about DHÈ Studio, our approach to architecture and interiors, and the principles behind designing spaces around people.',
+      },
+      services: {
+        title: 'Architecture & Interior Design Services',
+        description:
+          'Explore DHÈ Studio’s architectural design, interior design, restoration and consulting services, from the first idea to the final detail.',
+      },
+      projects: {
+        title: 'Selected Architecture Projects',
+        description:
+          'A selection of architecture and interior projects by DHÈ Studio, each shaped around people, place and experience.',
+      },
+      contact: {
+        title: 'Start a Project',
+        description:
+          'Tell us about your space and ideas. Contact DHÈ Studio to start an architecture or interior design project.',
+      },
+      privacy: {
+        title: 'Privacy Policy',
+        description:
+          'How DHÈ Studio collects, uses and protects the personal information you share through this website.',
+      },
     },
   },
 
@@ -211,6 +251,10 @@ export const translations = {
       menu: 'Menu',
       mainNavigation: 'Navigimi kryesor',
       languageSelector: 'Zgjidh gjuhën',
+
+      // Not used yet. Wire these into Navbar.jsx after launch.
+      homeAriaLabel: 'Faqja kryesore e DHÈ Studio',
+      logoAlt: 'Logoja e DHÈ Studio',
     },
 
     servicesPage: {
@@ -263,11 +307,18 @@ export const translations = {
 
       galleryLabel: 'Galeria e projektit',
       openImage: 'Hap imazhin',
-      closeGallery: 'Mbyll galerine',
+      closeGallery: 'Mbyll galerinë',
       close: 'Mbyll',
-      previousImage: 'Imazhi i meparshem',
-      nextImage: 'Imazhi tjeter',
-      emptyGallery: 'Nuk jane shtuar ende imazhe ne galeri.',
+      previousImage: 'Imazhi i mëparshëm',
+      nextImage: 'Imazhi tjetër',
+      emptyGallery:
+        'Nuk janë shtuar ende imazhe në galeri.',
+
+      // Not used yet. Wire these into ProjectDetails.jsx after launch.
+      openVideo: 'Hap videon',
+      videoFallback: 'video e projektit',
+      videoNotSupported:
+        'Shfletuesi juaj nuk e mbështet luajtjen e videove.',
 
       statuses: {
         Concept: 'Koncept',
@@ -275,6 +326,7 @@ export const translations = {
         Completed: 'Përfunduar',
       },
     },
+
     aboutPage: {
       loading: 'Informacioni për studion po ngarkohet...',
       error: 'Faqja Rreth nesh nuk mund të ngarkohej.',
@@ -284,9 +336,11 @@ export const translations = {
     homePage: {
       heroEyebrow: 'DUKE PROJEKTUAR PËRVOJA NJERËZORE',
       heroTitleFirstLine: 'Hapësira për jetën.',
-      heroTitleSecondLine: 'Të krijuara rreth jush.',
+      heroTitleSecondLine: 'Të krijuara rreth',
+      heroTitleEmphasis: 'jush.',
       heroDescription:
         'Një dialog mes njerëzve, vendit dhe mundësive.',
+      heroAriaLabel: 'Eksploroni arkitekturën bashkëkohore',
       scrollToDiscover: 'ZBULO MË SHUMË',
       heroNote: 'NJË PERSPEKTIVË TJETËR MBI HAPËSIRËN.',
 
@@ -310,6 +364,7 @@ export const translations = {
       servicesError:
         'Shërbimet nuk mund të ngarkoheshin.',
       serviceImageFallback: 'shërbim',
+      viewService: 'Shiko',
 
       projectsLabel: '03 / HAPËSIRA TË PËRZGJEDHURA',
       projectsTitleFirstLine: 'Disa mënyra se si',
@@ -327,11 +382,6 @@ export const translations = {
         'HAPËSIRA PËR T’U PËRJETUAR. VEND PËR TË IMAGJINUAR.',
       previousProject: 'Projekti i mëparshëm',
       nextProject: 'Projekti tjetër',
-
-      heroAriaLabel: 'Eksploroni arkitekturën bashkëkohore',
-      heroTitleSecondLine: 'Të krijuara rreth',
-      heroTitleEmphasis: 'jush.',
-      viewService: 'Shiko',
     },
 
     contactPage: {
@@ -340,24 +390,24 @@ export const translations = {
       titleSecondLine: 'idenë tuaj.',
       introduction:
         'Ndani me ne atë që keni në mendje. Nuk është e nevojshme t’i keni të gjitha të përcaktuara—do të fillojmë me një bisedë.',
-      scrollLink: 'FILLONI KËTU',
+      scrollLink: 'LE TË FLASIM',
 
       formLabel: 'KËRKESË PËR PROJEKT',
       formHeading:
         'Disa të dhëna që na ndihmojnë të kuptojmë projektin tuaj.',
-
-      securityRequired:
-        'Ju lutemi, përfundoni verifikimin e sigurisë.',
+      formHeadingFirst:
+        'Disa të dhëna që na ndihmojnë të kuptojmë',
+      formHeadingEmphasis: 'projektin tuaj.',
 
       name: 'Emri',
       email: 'Email',
       phone: 'Telefoni',
       message: 'Na tregoni për projektin tuaj',
       messagePlaceholder:
-        'Përshkruani projektin, idenë ose atë që dëshironi të krijoni.',
+        'Na tregoni për hapësirën, vendndodhjen, sipërfaqen e përafërt, afatin ose çdo gjë tjetër që dëshironi të dimë.',
 
       help:
-        'Mund të përmendni llojin e projektit, vendndodhjen, sipërfaqen e përafërt, nevojat, stilin e preferuar, afatin ose buxhetin.',
+        'Nuk është e nevojshme të përfshini këtu të dhënat tuaja të kontaktit. Mund të përmendni llojin e projektit, vendndodhjen, sipërfaqen e përafërt, nevojat, stilin e preferuar, afatin ose buxhetin.',
 
       consent:
         'Pranoj që DHÈ Studio t’i përdorë këto të dhëna për t’iu përgjigjur kërkesës sime.',
@@ -367,15 +417,10 @@ export const translations = {
       success: 'Faleminderit. Kërkesa juaj u dërgua.',
       error: 'Diçka shkoi keq. Ju lutemi, provoni përsëri.',
 
-      scrollLink: 'LE TË FLASIM',
-      formHeadingFirst:
-        'Disa të dhëna që na ndihmojnë të kuptojmë',
-      formHeadingEmphasis: 'projektin tuaj.',
-      messagePlaceholder:
-        'Na tregoni për hapësirën, vendndodhjen, sipërfaqen e përafërt, afatin ose çdo gjë tjetër që dëshironi të dimë.',
-      help:
-        'Nuk është e nevojshme të përfshini këtu të dhënat tuaja të kontaktit. Mund të përmendni llojin e projektit, vendndodhjen, sipërfaqen e përafërt, nevojat, stilin e preferuar, afatin ose buxhetin.',
+      securityRequired:
+        'Ju lutemi, përfundoni verifikimin e sigurisë.',
     },
+
     footer: {
       headingFirstLine: 'Çdo hapësirë e veçantë',
       headingBeforeEmphasis: 'fillon me',
@@ -385,11 +430,16 @@ export const translations = {
       email: 'EMAIL',
       socials: 'RRJETET SOCIALE',
       backToTop: 'Kthehu lart',
+      privacyLink: 'Politika e privatësisë',
 
       homeAriaLabel: 'Faqja kryesore e DHÈ Studio',
       instagramAriaLabel:
         'Vizitoni DHÈ Studio në Instagram',
+
+      // Not used yet. Wire this into Footer.jsx after launch.
+      logoAlt: 'Logoja e DHÈ Studio',
     },
+
     notFoundPage: {
       label: '404 / FAQJA NUK U GJET',
       titleFirstLine: 'Kjo hapësirë',
@@ -397,6 +447,39 @@ export const translations = {
       description:
         'Faqja që po kërkoni mund të jetë zhvendosur, fshirë ose mund të mos ketë ekzistuar.',
       homeLink: 'Kthehu në kryefaqe',
+    },
+
+    seo: {
+      home: {
+        title: 'DHÈ Studio',
+        description:
+          'DHÈ Studio është një studio arkitekture dhe dizajni të brendshëm që krijon hapësira të menduara rreth njerëzve, kontekstit dhe përvojës.',
+      },
+      about: {
+        title: 'Rreth DHÈ Studio',
+        description:
+          'Njihuni me DHÈ Studio, qasjen tonë ndaj arkitekturës dhe ambienteve të brendshme, dhe parimet e projektimit të hapësirave rreth njerëzve.',
+      },
+      services: {
+        title: 'Shërbime të Arkitekturës dhe Dizajnit të Brendshëm',
+        description:
+          'Zbuloni shërbimet e DHÈ Studio në dizajnin arkitekturor, dizajnin e brendshëm, restaurim dhe konsulencë, nga ideja e parë deri te detaji i fundit.',
+      },
+      projects: {
+        title: 'Projekte të Përzgjedhura Arkitekturore',
+        description:
+          'Një përzgjedhje projektesh arkitekturore dhe të brendshme nga DHÈ Studio, secili i formuar rreth njerëzve, vendit dhe përvojës.',
+      },
+      contact: {
+        title: 'Filloni një Projekt',
+        description:
+          'Na tregoni për hapësirën dhe idetë tuaja. Kontaktoni DHÈ Studio për të nisur një projekt arkitekture ose dizajni të brendshëm.',
+      },
+      privacy: {
+        title: 'Politika e Privatësisë',
+        description:
+          'Si i mbledh, i përdor dhe i mbron DHÈ Studio të dhënat personale që ndani përmes kësaj faqeje.',
+      },
     },
   },
 
@@ -412,6 +495,10 @@ export const translations = {
       menu: 'Menü',
       mainNavigation: 'Ana navigasyon',
       languageSelector: 'Dil seçin',
+
+      // Not used yet. Wire these into Navbar.jsx after launch.
+      homeAriaLabel: 'DHÈ Studio ana sayfası',
+      logoAlt: 'DHÈ Studio logosu',
     },
 
     servicesPage: {
@@ -459,6 +546,9 @@ export const translations = {
       status: 'DURUM',
       area: 'ALAN',
 
+      imageFallback: 'projesi',
+      galleryImageFallback: 'proje görünümü',
+
       galleryLabel: 'Proje galerisi',
       openImage: 'Görseli aç',
       closeGallery: 'Galeriyi kapat',
@@ -466,8 +556,12 @@ export const translations = {
       previousImage: 'Önceki görsel',
       nextImage: 'Sonraki görsel',
       emptyGallery: 'Henüz galeri görseli eklenmedi.',
-      imageFallback: 'projesi',
-      galleryImageFallback: 'proje görünümü',
+
+      // Not used yet. Wire these into ProjectDetails.jsx after launch.
+      openVideo: 'Videoyu aç',
+      videoFallback: 'proje videosu',
+      videoNotSupported:
+        'Tarayıcınız video oynatmayı desteklemiyor.',
 
       statuses: {
         Concept: 'Konsept',
@@ -475,6 +569,7 @@ export const translations = {
         Completed: 'Tamamlandı',
       },
     },
+
     aboutPage: {
       loading: 'Stüdyo bilgileri yükleniyor...',
       error: 'Hakkımızda sayfası yüklenemedi.',
@@ -484,9 +579,11 @@ export const translations = {
     homePage: {
       heroEyebrow: 'İNSAN DENEYİMLERİNİ TASARLAMAK',
       heroTitleFirstLine: 'Yaşam için mekânlar.',
-      heroTitleSecondLine: 'Sizin etrafınızda tasarlandı.',
+      heroTitleSecondLine: 'Sizin için',
+      heroTitleEmphasis: 'tasarlandı.',
       heroDescription:
         'İnsanlar, mekân ve olasılıklar arasında bir diyalog.',
+      heroAriaLabel: 'Çağdaş mimariyi keşfedin',
       scrollToDiscover: 'KEŞFETMEK İÇİN KAYDIRIN',
       heroNote: 'MEKÂNA FARKLI BİR BAKIŞ.',
 
@@ -510,6 +607,7 @@ export const translations = {
       servicesLoading: 'Hizmetler yükleniyor...',
       servicesError: 'Hizmetler yüklenemedi.',
       serviceImageFallback: 'hizmeti',
+      viewService: 'Görüntüle',
 
       projectsLabel: '03 / SEÇİLMİŞ MEKÂNLAR',
       projectsTitleFirstLine: 'Bir fikrin',
@@ -526,36 +624,33 @@ export const translations = {
         'DENEYİMLENECEK MEKÂNLAR. HAYAL ETMEK İÇİN ALAN.',
       previousProject: 'Önceki proje',
       nextProject: 'Sonraki proje',
-
-      heroAriaLabel: 'Çağdaş mimariyi keşfedin',
-      heroTitleSecondLine: 'Sizin için',
-      heroTitleEmphasis: 'tasarlandı.',
-      viewService: 'Görüntüle',
     },
+
     contactPage: {
       label: 'BİR PROJE BAŞLATIN',
       titleFirstLine: 'Bize fikrinizden',
       titleSecondLine: 'bahsedin.',
       introduction:
         'Aklınızdakileri bizimle paylaşın. Her ayrıntıyı önceden belirlemiş olmanız gerekmez—bir konuşmayla başlayacağız.',
-      scrollLink: 'BURADAN BAŞLAYIN',
+      scrollLink: 'KONUŞALIM',
 
       formLabel: 'PROJE TALEBİ',
       formHeading:
         'Projenizi anlamamıza yardımcı olacak birkaç ayrıntı.',
+      formHeadingFirst:
+        'Projenizi anlamamıza yardımcı olacak',
+      formHeadingEmphasis: 'birkaç ayrıntı.',
 
       name: 'Ad',
       email: 'E-posta',
       phone: 'Telefon',
       message: 'Bize projenizden bahsedin',
       messagePlaceholder:
-        'Projenizi, fikrinizi veya oluşturmak istediğiniz şeyi açıklayın.',
+        'Mekân, konum, yaklaşık alan, zaman planı veya bilmemizi istediğiniz diğer ayrıntılardan bahsedin.',
 
       help:
-        'Proje türünü, konumu, yaklaşık alanı, ihtiyaçları, tercih edilen stili, zaman planını veya bütçeyi belirtebilirsiniz.',
+        'İletişim bilgilerinizi buraya eklemeniz gerekmez. Proje türünü, konumu, yaklaşık alanı, ihtiyaçları, tercih edilen stili, zaman planını veya bütçeyi belirtebilirsiniz.',
 
-      securityRequired:
-        'Lütfen güvenlik doğrulamasını tamamlayın.',
       consent:
         'DHÈ Studio’nun talebime yanıt vermek için bu bilgileri kullanmasını kabul ediyorum.',
 
@@ -564,15 +659,10 @@ export const translations = {
       success: 'Teşekkür ederiz. Talebiniz gönderildi.',
       error: 'Bir sorun oluştu. Lütfen tekrar deneyin.',
 
-      scrollLink: 'KONUŞALIM',
-      formHeadingFirst:
-        'Projenizi anlamamıza yardımcı olacak',
-      formHeadingEmphasis: 'birkaç ayrıntı.',
-      messagePlaceholder:
-        'Mekân, konum, yaklaşık alan, zaman planı veya bilmemizi istediğiniz diğer ayrıntılardan bahsedin.',
-      help:
-        'İletişim bilgilerinizi buraya eklemeniz gerekmez. Proje türünü, konumu, yaklaşık alanı, ihtiyaçları, tercih edilen stili, zaman planını veya bütçeyi belirtebilirsiniz.',
+      securityRequired:
+        'Lütfen güvenlik doğrulamasını tamamlayın.',
     },
+
     footer: {
       headingFirstLine: 'Her etkileyici mekân',
       headingBeforeEmphasis: '',
@@ -582,11 +672,16 @@ export const translations = {
       email: 'E-POSTA',
       socials: 'SOSYAL MEDYA',
       backToTop: 'Başa dön',
+      privacyLink: 'Gizlilik politikası',
 
       homeAriaLabel: 'DHÈ Studio ana sayfası',
       instagramAriaLabel:
         'DHÈ Studio’yu Instagram’da ziyaret edin',
+
+      // Not used yet. Wire this into Footer.jsx after launch.
+      logoAlt: 'DHÈ Studio logosu',
     },
+
     notFoundPage: {
       label: '404 / SAYFA BULUNAMADI',
       titleFirstLine: 'Bu mekân',
@@ -594,6 +689,39 @@ export const translations = {
       description:
         'Aradığınız sayfa taşınmış, kaldırılmış veya hiç var olmamış olabilir.',
       homeLink: 'Ana sayfaya dön',
+    },
+
+    seo: {
+      home: {
+        title: 'DHÈ Studio',
+        description:
+          'DHÈ Studio; insanlar, bağlam ve deneyim etrafında şekillenen özenli mekânlar tasarlayan bir mimarlık ve iç mekân tasarım stüdyosudur.',
+      },
+      about: {
+        title: 'DHÈ Studio Hakkında',
+        description:
+          'DHÈ Studio’yu, mimariye ve iç mekâna yaklaşımımızı ve mekânları insanlar etrafında tasarlama ilkelerimizi tanıyın.',
+      },
+      services: {
+        title: 'Mimari ve İç Mekân Tasarım Hizmetleri',
+        description:
+          'DHÈ Studio’nun mimari tasarım, iç mekân tasarımı, restorasyon ve danışmanlık hizmetlerini ilk fikirden son ayrıntıya kadar keşfedin.',
+      },
+      projects: {
+        title: 'Seçilmiş Mimari Projeler',
+        description:
+          'DHÈ Studio’nun insan, mekân ve deneyim etrafında şekillenen seçilmiş mimari ve iç mekân projeleri.',
+      },
+      contact: {
+        title: 'Bir Proje Başlatın',
+        description:
+          'Mekânınızı ve fikirlerinizi bize anlatın. Bir mimari veya iç mekân tasarım projesi başlatmak için DHÈ Studio ile iletişime geçin.',
+      },
+      privacy: {
+        title: 'Gizlilik Politikası',
+        description:
+          'DHÈ Studio, bu web sitesi üzerinden paylaştığınız kişisel bilgileri nasıl toplar, kullanır ve korur.',
+      },
     },
   },
 };

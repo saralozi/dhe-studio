@@ -17,7 +17,7 @@ import { urlFor } from '../../sanity/image';
 import {
   LocalizedLink,
 } from '../LocalizedLink/LocalizedLink';
-
+import SEO from '../SEO/SEO';
 import './projects.css';
 
 const categoryOptions = [
@@ -31,8 +31,8 @@ const categoryOptions = [
 const Projects = () => {
   const { language } = useLanguage();
 
-  const text =
-    getTranslations(language).projectsPage;
+  const translations = getTranslations(language);
+  const text = translations.projectsPage;
 
   const [projects, setProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] =
@@ -135,6 +135,12 @@ const Projects = () => {
 
   return (
     <main className="projects-page">
+
+      <SEO
+        title={translations.seo.projects.title}
+        description={translations.seo.projects.description}
+      />
+
       {/* Page introduction */}
 
       <section className="projects-hero inner-page-hero">

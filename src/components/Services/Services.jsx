@@ -9,14 +9,14 @@ import {
 import { sanityClient } from '../../sanity/client';
 import { servicesQuery } from '../../sanity/queries';
 import { urlFor } from '../../sanity/image';
-
+import SEO from '../SEO/SEO';
 import './services.css';
 
 const Services = () => {
   const { language } = useLanguage();
 
-  const text =
-    getTranslations(language).servicesPage;
+  const translations = getTranslations(language);
+  const text = translations.servicesPage;
 
   const servicesListRef = useRef(null);
 
@@ -103,7 +103,12 @@ const Services = () => {
   }, [isLoading, error, services]);
 
   return (
+
     <main className="services-page">
+      <SEO
+        title={translations.seo.services.title}
+        description={translations.seo.services.description}
+      />
       {/* Page introduction */}
 
       <section className="services-hero inner-page-hero">

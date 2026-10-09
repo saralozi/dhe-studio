@@ -22,6 +22,7 @@ import {
 
 import NotFound from '../NotFound/NotFound';
 import './projectdetails.css';
+import SEO from '../SEO/SEO';
 
 const isVideoItem = (galleryItem) => {
   return (
@@ -278,6 +279,8 @@ const ProjectDetails = () => {
   if (projectError) {
     return (
       <main className="project-details">
+        <SEO title={text.error} description={text.error} noindex />
+
         <div className="project-details-message">
           <p>{projectError}</p>
 
@@ -313,8 +316,23 @@ const ProjectDetails = () => {
   const selectedMediaIsVideo =
     isVideoItem(selectedMedia);
 
+  const seoImage = project.coverImage?.asset
+    ? urlFor(project.coverImage)
+      .width(1200)
+      .height(630)
+      .fit('crop')
+      .format('jpg')
+      .url()
+    : undefined;
+
   return (
     <main className="project-details">
+
+      <SEO
+        title={project.title}
+        description={project.shortDescription || project.fullDescription}
+        image={seoImage}
+      />
       {/* Project hero */}
 
       <section className="project-details-hero">
@@ -473,8 +491,8 @@ const ProjectDetails = () => {
                   return (
                     <figure
                       className={`project-details-gallery-item ${galleryItemIsVideo
-                          ? 'is-video'
-                          : 'is-image'
+                        ? 'is-video'
+                        : 'is-image'
                         }`}
                       key={galleryItem._key}
                     >
