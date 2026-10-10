@@ -167,6 +167,7 @@ export const translations = {
 
       consent:
         'I agree that DHÈ Studio may use these details to respond to my inquiry.',
+      consentPolicyLink: 'Read our privacy policy',
 
       submit: 'Send inquiry',
       submitting: 'Sending...',
@@ -412,6 +413,8 @@ export const translations = {
       consent:
         'Pranoj që DHÈ Studio t’i përdorë këto të dhëna për t’iu përgjigjur kërkesës sime.',
 
+      consentPolicyLink: 'Lexoni politikën e privatësisë',
+
       submit: 'Dërgo kërkesën',
       submitting: 'Po dërgohet...',
       success: 'Faleminderit. Kërkesa juaj u dërgua.',
@@ -653,7 +656,7 @@ export const translations = {
 
       consent:
         'DHÈ Studio’nun talebime yanıt vermek için bu bilgileri kullanmasını kabul ediyorum.',
-
+      consentPolicyLink: 'Gizlilik politikamızı okuyun',
       submit: 'Talebi gönder',
       submitting: 'Gönderiliyor...',
       success: 'Teşekkür ederiz. Talebiniz gönderildi.',

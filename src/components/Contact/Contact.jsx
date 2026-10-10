@@ -12,6 +12,9 @@ import {
 } from '../../i18n/translations';
 import SEO from '../SEO/SEO';
 import './contact.css';
+import { LocalizedLink } from '../LocalizedLink/LocalizedLink';
+
+const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 const initialFormData = {
   name: '',
@@ -199,7 +202,7 @@ const Contact = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8787/api/inquiry',
+        `${API_URL}/api/inquiry`,
         {
           method: 'POST',
 
@@ -239,7 +242,7 @@ const Contact = () => {
 
   return (
     <main className="contact-page">
-<SEO
+      <SEO
         title={translations.seo.contact.title}
         description={translations.seo.contact.description}
       />      {/* Introduction */}
@@ -378,8 +381,17 @@ const Contact = () => {
               required
             />
 
-            <span>{text.consent}</span>
-          </label>
+            <span>
+              {text.consent}{' '}
+              <LocalizedLink
+                to="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-privacy-link"
+              >
+                {text.consentPolicyLink}
+              </LocalizedLink>
+            </span>          </label>
 
           {/* Turnstile */}
 

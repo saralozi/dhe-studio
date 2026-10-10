@@ -360,6 +360,11 @@
   background-color: rgba(179, 70, 46, 0.1);
   color: #8e321f;
 }
+.contact-privacy-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* Large screens */
 
