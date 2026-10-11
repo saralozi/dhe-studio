@@ -1,6 +1,11 @@
 {
   "name": "dhe-studio",
   "compatibility_date": "2026-09-23",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "studiodhe.com", "custom_domain": true },
+    { "pattern": "www.studiodhe.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"

@@ -1,5 +1,7 @@
 const allowedOrigins = [
   'http://localhost:5173',
+  'https://dhe-studio.saralozi08.workers.dev',
+
 ];
 
 /* Project brief structure expected from Workers AI */
@@ -447,27 +449,27 @@ const createInquiryEmailHtml = ({
   const priorities =
     brief.priorities.length > 0
       ? brief.priorities
-          .map(
-            (priority) => `
+        .map(
+          (priority) => `
               <li style="margin-bottom: 6px;">
                 ${escapeHtml(priority)}
               </li>
             `
-          )
-          .join('')
+        )
+        .join('')
       : '<li>None identified</li>';
 
   const missingInformation =
     brief.missingInformation.length > 0
       ? brief.missingInformation
-          .map(
-            (item) => `
+        .map(
+          (item) => `
               <li style="margin-bottom: 6px;">
                 ${escapeHtml(item)}
               </li>
             `
-          )
-          .join('')
+        )
+        .join('')
       : '<li>None identified</li>';
 
   return `
@@ -566,8 +568,8 @@ const createInquiryEmailHtml = ({
                   "
                 >
                   ${escapeHtml(
-                    brief.projectType
-                  )}
+    brief.projectType
+  )}
                 </td>
               </tr>
 
@@ -588,8 +590,8 @@ const createInquiryEmailHtml = ({
                   "
                 >
                   ${escapeHtml(
-                    brief.location
-                  )}
+    brief.location
+  )}
                 </td>
               </tr>
 
@@ -610,8 +612,8 @@ const createInquiryEmailHtml = ({
                   "
                 >
                   ${escapeHtml(
-                    brief.approximateArea
-                  )}
+    brief.approximateArea
+  )}
                 </td>
               </tr>
 
@@ -632,8 +634,8 @@ const createInquiryEmailHtml = ({
                   "
                 >
                   ${escapeHtml(
-                    brief.timeline
-                  )}
+    brief.timeline
+  )}
                 </td>
               </tr>
 
@@ -654,8 +656,8 @@ const createInquiryEmailHtml = ({
                   "
                 >
                   ${escapeHtml(
-                    brief.budget
-                  )}
+    brief.budget
+  )}
                 </td>
               </tr>
             </table>
@@ -753,16 +755,16 @@ const createInquiryEmailHtml = ({
               <strong>Phone:</strong>
 
               ${escapeHtml(
-                phone || 'Not provided'
-              )}
+    phone || 'Not provided'
+  )}
             </p>
 
             <p style="margin: 0 0 8px;">
               <strong>Website language:</strong>
 
               ${escapeHtml(
-                language.toUpperCase()
-              )}
+    language.toUpperCase()
+  )}
             </p>
 
             <p style="margin: 0;">
@@ -789,15 +791,15 @@ const createInquiryEmailText = ({
   const priorities =
     brief.priorities.length > 0
       ? brief.priorities
-          .map((item) => `- ${item}`)
-          .join('\n')
+        .map((item) => `- ${item}`)
+        .join('\n')
       : '- None identified';
 
   const missingInformation =
     brief.missingInformation.length > 0
       ? brief.missingInformation
-          .map((item) => `- ${item}`)
-          .join('\n')
+        .map((item) => `- ${item}`)
+        .join('\n')
       : '- None identified';
 
   return `
@@ -923,7 +925,7 @@ const sendInquiryEmail = async ({
   if (!response.ok) {
     throw new Error(
       responseData.message ||
-        `Resend returned HTTP ${response.status}.`
+      `Resend returned HTTP ${response.status}.`
     );
   }
 
@@ -1269,7 +1271,7 @@ export default {
         console.error(
           'Turnstile rejected the submission:',
           turnstileResult[
-            'error-codes'
+          'error-codes'
           ]
         );
 
