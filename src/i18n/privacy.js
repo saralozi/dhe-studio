@@ -2,7 +2,7 @@ export const privacyContent = {
   en: {
     title: 'Privacy Policy',
     updatedLabel: 'Last updated',
-    updated: '[PUBLISH DATE, e.g. 9 October 2026]',
+    updated: '12 October 2026',
 
     sections: [
       {
