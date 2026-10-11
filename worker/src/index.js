@@ -1,7 +1,8 @@
 const allowedOrigins = [
   'http://localhost:5173',
   'https://dhe-studio.saralozi08.workers.dev',
-
+  'https://studiodhe.com',
+  'https://www.studiodhe.com'
 ];
 
 /* Project brief structure expected from Workers AI */
