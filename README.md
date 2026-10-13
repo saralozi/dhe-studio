@@ -4,9 +4,15 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 
 **Live site:** [studiodhe.com](https://studiodhe.com)
 
-<!-- Add 2-3 screenshots here, for example:
 ![Home page](docs/screenshots/home.png)
--->
+
+| Projects with search and filter | Project page with gallery |
+|---|---|
+| ![Projects](docs/screenshots/project-list.png) | ![Project detail](docs/screenshots/project-details.png) |
+
+| Fullscreen gallery | Project inquiry form |
+|---|---|
+| ![Lightbox](docs/screenshots/gallery.png) | ![Contact form](docs/screenshots/contact.png) |
 
 ## At a glance
 
@@ -213,6 +219,6 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 
 ## Credits
 
-Designed and developed by Sara ([@saralozi](https://github.com/saralozi)).
+Designed and developed by ([@saralozi](https://github.com/saralozi)).
 
 The DHÈ Studio name, logo, project images and written content belong to DHÈ Studio.
