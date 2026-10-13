@@ -13,6 +13,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - **What it is:** a freelance client project. A complete platform where the studio manages its own projects and services, shows its work in three languages (English, Albanian, Turkish) and receives structured client inquiries.
 - **My role:** design and full-stack development, from the CMS and the serverless backend to SEO, deployment, DNS and email setup.
 - **Stack:** React 19, Vite, Sanity CMS, Cloudflare Workers, D1, Workers AI, Turnstile, Resend.
+- **Quality (Lighthouse, production site):** Desktop 96 performance, 92 accessibility, 100 best practices, 100 SEO. Mobile 73 / 96 / 100 / 100 (mobile run on simulated slow 4G).
 - **Built in about three weeks** (September 21 to October 12, 2026), with a clear Git history.
 
 ## Features
@@ -51,7 +52,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - Inquiries stored in D1 before any email is sent
 - AI-structured project brief with a safe fallback
 - Email notification to the studio through Resend
-- Automated tests for the main success and failure paths
+- 11 automated tests (Vitest) covering validation, spam protection, rate limiting, the AI fallback, email failures and what gets stored in the database
 
 ## How it works
 
@@ -200,6 +201,9 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 
 ## Roadmap
 
+- Performance: serve the hero images in smaller, responsive sizes (they are the main reason mobile scores 73), preload fonts, and request Sanity images at display size
+- Accessibility: fix the low-contrast language buttons and small touch targets in the navbar
+- Security headers (HSTS, CSP, frame protection) through a Cloudflare headers file
 - Admin dashboard for inquiries, with a retry button for failed emails
 - Automatic retry of failed notification emails
 - Cross-language semantic search across projects
