@@ -252,6 +252,8 @@ const Home = () => {
             <img
               className="home-hero-outside"
               src="/images/modern-exterior.webp"
+              srcSet="/images/modern-exterior-800.webp 800w, /images/modern-exterior.webp 1536w"
+              sizes="100vw"
               alt={text.exteriorImageAlt}
               fetchPriority="high"
             />
@@ -259,6 +261,8 @@ const Home = () => {
             <img
               className="home-hero-inside"
               src="/images/modern-interior.webp"
+              srcSet="/images/modern-interior-800.webp 800w, /images/modern-interior.webp 1536w"
+              sizes="100vw"
               alt={text.interiorImageAlt}
             />
           </div>
