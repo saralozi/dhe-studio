@@ -51,7 +51,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - `sitemap.xml` and `robots.txt` generated at every build, including every project from Sanity
 - Social preview image and favicon set
 
-**Performance and security**
+**Performance, accessibility and security**
 
 - Responsive hero images with `srcset`, so phones download about 130 KB instead of 800 KB
 - Self-hosted font, with no request to Google Fonts
@@ -109,7 +109,7 @@ The AI feature does not design projects or give architectural advice. Its only j
 - **Measure, then fix.** Performance work started from Lighthouse reports on the live site, not from guesses. Each change targeted one finding, and the site was measured again afterwards.
 - **Tests mock the outside world.** The Worker tests replace Workers AI, the rate limiter, Turnstile and Resend, and check what is stored in a real test database.
 
-## Performance and security results
+## Performance, accessibility and security results
 
 After launch I measured the live site with Lighthouse and fixed what the reports showed.
 
@@ -118,8 +118,8 @@ After launch I measured the live site with Lighthouse and fixed what the reports
 | Mobile performance | 73 | 93 |
 | Desktop performance | 96 | 99 |
 | Desktop accessibility | 92 | 100 |
-| Mobile largest paint | 7.1 s | 3.0 s |
-| Mobile first paint | 2.4 s | 1.8 s |
+| Mobile Largest Contentful Paint (Core Web Vitals) | 7.1 s | 3.0 s |
+| Mobile First Contentful Paint | 2.4 s | 1.8 s |
 | Security headers | none | A |
 
 What changed, and why:
@@ -127,7 +127,7 @@ What changed, and why:
 - **Hero images.** Two photos weighed about 800 KB and slowed down phones. I compressed them, made an 800 px version for phones and used `srcset` so each device downloads only the size it needs.
 - **Font loading.** The font was loaded through a CSS `@import`, which made the browser wait for several requests in a row. It is now served from the site itself with `@fontsource/manrope`, which also means visitors' browsers no longer contact Google.
 - **Preconnect.** The Sanity connection opens early.
-- **Accessibility.** Low-contrast greys were darkened and the language buttons made larger, so they are easier to read and to tap.
+- **Accessibility (WCAG).** Low-contrast greys were darkened and the language buttons made larger, so they meet the WCAG contrast and touch-target guidelines.
 - **Security.** A `public/_headers` file sets the security headers, and Cloudflare redirects all HTTP traffic to HTTPS. A Content-Security-Policy is still to do, because it needs careful testing with the outside services the site uses.
 
 ## Development timeline
@@ -234,8 +234,6 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 | `dhe_studio_inquiries_db` | D1 binding | Inquiry storage |
 
 **Deploying the Worker:** set the secrets with `npx wrangler secret put NAME`, create the table with `npx wrangler d1 migrations apply dhe-studio-inquiries-db --remote`, then run `npx wrangler deploy`.
-
-## Roadmap
 
 - Content-Security-Policy header (all other security headers are already in place)
 - Request Sanity images at display size
