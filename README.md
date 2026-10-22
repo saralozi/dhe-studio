@@ -19,8 +19,8 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - **What it is:** a freelance client project. A complete platform where the studio manages its own projects and services, shows its work in three languages (English, Albanian, Turkish) and receives structured client inquiries.
 - **My role:** design and full-stack development, from the CMS and the serverless backend to SEO, deployment, DNS and email setup.
 - **Stack:** React 19, Vite, Sanity CMS, Cloudflare Workers, D1, Workers AI, Turnstile, Resend.
-- **Quality (Lighthouse, production site):** Desktop 96 performance, 92 accessibility, 100 best practices, 100 SEO. Mobile 73 / 96 / 100 / 100 (mobile run on simulated slow 4G).
-- **Built in about three weeks** (September 21 to October 12, 2026), with a clear Git history.
+- **Quality (Lighthouse, production site):** Desktop 99 performance, 100 accessibility, 100 best practices, 100 SEO. Mobile 93 / 96 / 100 / 100 on simulated slow 4G (scores vary a few points between runs). Security headers: A on securityheaders.com.
+- **Built in about three weeks** (September 21 to October 12, 2026), then measured and optimized, with a clear Git history.
 
 ## Features
 
@@ -50,6 +50,12 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - `hreflang` links between language versions
 - `sitemap.xml` and `robots.txt` generated at every build, including every project from Sanity
 - Social preview image and favicon set
+
+**Performance and security**
+
+- Responsive hero images with `srcset`, so phones download about 130 KB instead of 800 KB
+- Self-hosted font, with no request to Google Fonts
+- Security headers (HSTS, X-Frame-Options, nosniff, Referrer-Policy, COOP, Permissions-Policy) and an automatic HTTPS redirect
 
 **Client inquiries**
 
@@ -100,7 +106,29 @@ The AI feature does not design projects or give architectural advice. Its only j
 - **The AI is a bounded helper, not a decision maker.** Its output is constrained by a JSON schema, validated field by field and cleaned. The visitor's message is treated as untrusted input. If anything fails, the original message is used instead. Everything placed in the email is escaped.
 - **Generated, not hand-written, SEO files.** A build script reads the project slugs from Sanity and writes the sitemap and robots file, so a new project is never missing.
 - **Content model built for editors.** Localized fields, required alt text in every language and one shared slug per project keep the editing simple and the URLs stable.
+- **Measure, then fix.** Performance work started from Lighthouse reports on the live site, not from guesses. Each change targeted one finding, and the site was measured again afterwards.
 - **Tests mock the outside world.** The Worker tests replace Workers AI, the rate limiter, Turnstile and Resend, and check what is stored in a real test database.
+
+## Performance and security results
+
+After launch I measured the live site with Lighthouse and fixed what the reports showed.
+
+| | Before | After |
+| --- | --- | --- |
+| Mobile performance | 73 | 93 |
+| Desktop performance | 96 | 99 |
+| Desktop accessibility | 92 | 100 |
+| Mobile largest paint | 7.1 s | 3.0 s |
+| Mobile first paint | 2.4 s | 1.8 s |
+| Security headers | none | A |
+
+What changed, and why:
+
+- **Hero images.** Two photos weighed about 800 KB and slowed down phones. I compressed them, made an 800 px version for phones and used `srcset` so each device downloads only the size it needs.
+- **Font loading.** The font was loaded through a CSS `@import`, which made the browser wait for several requests in a row. It is now served from the site itself with `@fontsource/manrope`, which also means visitors' browsers no longer contact Google.
+- **Preconnect.** The Sanity connection opens early.
+- **Accessibility.** Low-contrast greys were darkened and the language buttons made larger, so they are easier to read and to tap.
+- **Security.** A `public/_headers` file sets the security headers, and Cloudflare redirects all HTTP traffic to HTTPS. A Content-Security-Policy is still to do, because it needs careful testing with the outside services the site uses.
 
 ## Development timeline
 
@@ -112,6 +140,7 @@ The AI feature does not design projects or give architectural advice. Its only j
 | Oct 4 – 6 | Inquiry backend hardened: validation, D1 storage, Turnstile, AI brief with tests, rate limiting, Resend email; video support and refined galleries |
 | Oct 9 – 10 | Language-prefixed URLs, SEO component, privacy policy, sitemap and robots generation, favicon |
 | Oct 11 – 12 | Production deployment on Cloudflare, real spam protection, domain connected |
+| Oct 22 – 23 | Performance and security pass: responsive hero images, self-hosted font, security headers, HTTPS redirect, contrast and tap-target fixes |
 
 ## Production setup
 
@@ -123,13 +152,14 @@ Some of the work lives in service dashboards, not in this repository:
 - **Spam protection.** A Turnstile widget with a hostname allowlist. The site key is public, and the secret key is stored only in the Worker.
 - **Secrets.** Stored as Worker secrets and build variables, never in the repository.
 - **Allowed origins.** The production domain is listed in the Sanity CORS settings, the Worker and the Turnstile widget.
+- **Security headers.** Set in `public/_headers`, and Cloudflare's "Always Use HTTPS" redirects every HTTP request.
 - **Search.** The site is registered in Google Search Console and the generated sitemap is submitted.
 
 ## Tech stack
 
 | Area | Tools |
 | --- | --- |
-| Frontend | React 19, Vite, React Router, JavaScript, CSS |
+| Frontend | React 19, Vite, React Router, JavaScript, CSS, `@fontsource/manrope` (self-hosted font) |
 | CMS | Sanity, GROQ, `@sanity/image-url`, `sanity-plugin-internationalized-array` |
 | Backend | Cloudflare Workers, D1, Workers AI, Rate Limiting binding |
 | Spam protection | Cloudflare Turnstile |
@@ -146,7 +176,7 @@ dhe-studio/
 │   ├── context/         # language context
 │   ├── i18n/            # translations, privacy text, URL helpers
 │   └── sanity/          # client, GROQ queries, image helper
-├── public/              # favicon, social image, static assets
+├── public/              # favicon, social image, static assets, _headers (security headers)
 ├── scripts/
 │   └── generate-sitemap.mjs   # builds sitemap.xml and robots.txt
 ├── worker/              # Cloudflare Worker: inquiry API, tests, migrations
@@ -207,9 +237,8 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 
 ## Roadmap
 
-- Performance: serve the hero images in smaller, responsive sizes (they are the main reason mobile scores 73), preload fonts, and request Sanity images at display size
-- Accessibility: fix the low-contrast language buttons and small touch targets in the navbar
-- Security headers (HSTS, CSP, frame protection) through a Cloudflare headers file
+- Content-Security-Policy header (all other security headers are already in place)
+- Request Sanity images at display size
 - Admin dashboard for inquiries, with a retry button for failed emails
 - Automatic retry of failed notification emails
 - Cross-language semantic search across projects
@@ -219,6 +248,6 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 
 ## Credits
 
-Designed and developed by ([@saralozi](https://github.com/saralozi)).
+Designed and developed by Sara Lozi ([@saralozi](https://github.com/saralozi)).
 
 The DHÈ Studio name, logo, project images and written content belong to DHÈ Studio.
