@@ -1,7 +1,3 @@
-@import url(
-  'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap'
-);
-
 * {
   box-sizing: border-box;
 }
@@ -43,7 +39,7 @@ video {
 }
 
 .page-hero-title > span {
-  color: #919088;
+  color: #6f6d66;
 }
 
 /* Shared hero layout for internal pages */
