@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  website:
+    name: Lint and build website
+    runs-on: ubuntu-latest
+    env:
+      VITE_SANITY_PROJECT_ID: wzitgkes
+      VITE_SANITY_DATASET: production
+      VITE_SANITY_API_VERSION: '2025-01-01'
+      VITE_SITE_URL: https://studiodhe.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  worker:
+    name: Test inquiry Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+      - run: npm ci
+      - run: npx vitest run
