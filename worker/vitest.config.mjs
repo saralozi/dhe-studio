@@ -17,7 +17,7 @@ export default defineConfig({
 
       return {
         wrangler: {
-          configPath: './wrangler.jsonc',
+          configPath: './wrangler.test.jsonc',
         },
 
         miniflare: {
