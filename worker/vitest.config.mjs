@@ -20,9 +20,6 @@ export default defineConfig({
           configPath: './wrangler.jsonc',
         },
 
-        // Tests use fake AI, so don't connect to the real Cloudflare account
-        remoteBindings: false,
-
         miniflare: {
           bindings: {
             TEST_MIGRATIONS: migrations,
