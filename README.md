@@ -1,5 +1,7 @@
 # DHÈ Studio
 
+![CI](https://github.com/saralozi/dhe-studio/actions/workflows/ci.yml/badge.svg)
+
 A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Designing Human Experiences**, an architecture and interior design studio focused on how people experience the spaces around them.
 
 **Live site:** [studiodhe.com](https://studiodhe.com)
@@ -20,6 +22,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - **My role:** design and full-stack development, from the CMS and the serverless backend to SEO, deployment, DNS and email setup.
 - **Stack:** React 19, Vite, Sanity CMS, Cloudflare Workers, D1, Workers AI, Turnstile, Resend.
 - **Quality (Lighthouse, production site):** Desktop 99 performance, 100 accessibility, 100 best practices, 100 SEO. Mobile 93 / 96 / 100 / 100 on simulated slow 4G (scores vary a few points between runs). Security headers: A on securityheaders.com.
+- **Automated checks:** GitHub Actions lints and builds the website and runs the Worker's 11 tests on every push.
 - **Built in about three weeks** (September 21 to October 12, 2026), then measured and optimized, with a clear Git history.
 
 ## Features
