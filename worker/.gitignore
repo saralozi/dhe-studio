@@ -168,3 +168,5 @@ dist
 
 .dev.vars
 .dev.vars.*
+
+backup.sql
