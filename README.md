@@ -244,7 +244,6 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 - Admin dashboard for inquiries, with a retry button for failed emails
 - Automatic retry of failed notification emails
 - Cross-language semantic search across projects
-- Albanian and Turkish versions of the privacy policy
 - Lighthouse checks in CI
 
 ## Credits
