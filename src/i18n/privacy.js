@@ -56,7 +56,7 @@ export const privacyContent = {
       {
         heading: 'Cookies',
         paragraphs: [
-          'This website does not use analytics or advertising cookies. The security check on the contact form may use limited browser storage to tell people and bots apart.',
+          'We use Cloudflare Web Analytics to count visits and see which pages are viewed. It does not use cookies and does not track you across other websites.',
         ],
       },
       {
@@ -125,7 +125,7 @@ export const privacyContent = {
       {
         heading: 'Cookies',
         paragraphs: [
-          'Kjo faqe interneti nuk përdor cookies analitike ose reklamuese. Verifikimi i sigurisë në formularin e kontaktit mund të përdorë një hapësirë të kufizuar ruajtjeje në shfletues për të dalluar njerëzit nga robotët.',
+          'Ne përdorim Cloudflare Web Analytics për të numëruar vizitat dhe për të parë se cilat faqe shikohen. Ky shërbim nuk përdor cookies dhe nuk ju gjurmon në faqe të tjera interneti.',
         ],
       },
       {
@@ -194,7 +194,7 @@ export const privacyContent = {
       {
         heading: 'Çerezler',
         paragraphs: [
-          'Bu web sitesi analiz veya reklam çerezleri kullanmaz. İletişim formundaki güvenlik kontrolü, insanları botlardan ayırt etmek için tarayıcıda sınırlı bir depolama alanı kullanabilir.',
+          'Ziyaretleri saymak ve hangi sayfaların görüntülendiğini görmek için Cloudflare Web Analytics kullanıyoruz. Çerez kullanmaz ve sizi diğer web sitelerinde takip etmez.',
         ],
       },
       {
