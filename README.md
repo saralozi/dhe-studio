@@ -21,7 +21,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 - **What it is:** a freelance client project. A complete platform where the studio manages its own projects and services, shows its work in three languages (English, Albanian, Turkish) and receives structured client inquiries.
 - **My role:** design and full-stack development, from the CMS and the serverless backend to SEO, deployment, DNS and email setup.
 - **Stack:** React 19, Vite, Sanity CMS, Cloudflare Workers, D1, Workers AI, Turnstile, Resend.
-- **Quality (Lighthouse, production site):** Desktop 99 performance, 100 accessibility, 100 best practices, 100 SEO. Mobile 93 / 96 / 100 / 100 on simulated slow 4G (scores vary a few points between runs). Security headers: A on securityheaders.com.
+- **Quality (Lighthouse, production site):** Desktop 99 performance, 100 accessibility, 100 best practices, 100 SEO. Mobile 93 / 96 / 100 / 100 on simulated slow 4G (scores vary a few points between runs). Security headers: A on securityheaders.com, with an enforced Content-Security-Policy.
 - **Automated checks:** GitHub Actions lints and builds the website and runs the Worker's 11 tests on every push.
 - **Built in about three weeks** (September 21 to October 12, 2026), then measured and optimized, with a clear Git history.
 
@@ -58,7 +58,7 @@ A multilingual portfolio and client-inquiry platform for **DHÈ Studio — Desig
 
 - Responsive hero images with `srcset`, so phones download about 130 KB instead of 800 KB
 - Self-hosted font, with no request to Google Fonts
-- Security headers (HSTS, X-Frame-Options, nosniff, Referrer-Policy, COOP, Permissions-Policy) and an automatic HTTPS redirect
+- Security headers (HSTS, X-Frame-Options, nosniff, Referrer-Policy, COOP, Permissions-Policy), a Content-Security-Policy and an automatic HTTPS redirect
 
 **Client inquiries**
 
@@ -131,7 +131,7 @@ What changed, and why:
 - **Font loading.** The font was loaded through a CSS `@import`, which made the browser wait for several requests in a row. It is now served from the site itself with `@fontsource/manrope`, which also means visitors' browsers no longer contact Google.
 - **Preconnect.** The Sanity connection opens early.
 - **Accessibility (WCAG).** Low-contrast greys were darkened and the language buttons made larger, so they meet the WCAG contrast and touch-target guidelines.
-- **Security.** A `public/_headers` file sets the security headers, and Cloudflare redirects all HTTP traffic to HTTPS. A Content-Security-Policy is still to do, because it needs careful testing with the outside services the site uses.
+- **Security.** A `public/_headers` file sets the security headers, and Cloudflare redirects all HTTP traffic to HTTPS. A Content-Security-Policy limits where scripts, styles, images and connections may come from. It was first run in report-only mode and checked in the browser console, then enforced.
 
 ## Development timeline
 
@@ -155,7 +155,7 @@ Some of the work lives in service dashboards, not in this repository:
 - **Spam protection.** A Turnstile widget with a hostname allowlist. The site key is public, and the secret key is stored only in the Worker.
 - **Secrets.** Stored as Worker secrets and build variables, never in the repository.
 - **Allowed origins.** The production domain is listed in the Sanity CORS settings, the Worker and the Turnstile widget.
-- **Security headers.** Set in `public/_headers`, and Cloudflare's "Always Use HTTPS" redirects every HTTP request.
+- **Security headers.** Set in `public/_headers`, including a Content-Security-Policy that allows only the services the site uses (Sanity, Cloudflare Turnstile and Web Analytics, the inquiry Worker). Cloudflare's "Always Use HTTPS" redirects every HTTP request.
 - **Search.** The site is registered in Google Search Console and the generated sitemap is submitted.
 
 ## Tech stack
@@ -238,14 +238,14 @@ Local secrets go in `.dev.vars`, which is ignored by Git.
 
 **Deploying the Worker:** set the secrets with `npx wrangler secret put NAME`, create the table with `npx wrangler d1 migrations apply dhe-studio-inquiries-db --remote`, then run `npx wrangler deploy`.
 
-- Content-Security-Policy header (all other security headers are already in place)
+## Roadmap
+
 - Request Sanity images at display size
 - Admin dashboard for inquiries, with a retry button for failed emails
 - Automatic retry of failed notification emails
 - Cross-language semantic search across projects
-- Privacy-friendly analytics
 - Albanian and Turkish versions of the privacy policy
-- CI with linting, tests and Lighthouse checks
+- Lighthouse checks in CI
 
 ## Credits
 
